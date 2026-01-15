@@ -4,7 +4,7 @@ import { useFilters } from '@/contexts/FilterContext';
 
 const data = [
   { name: 'Verified', value: 15420, color: 'hsl(142, 76%, 36%)', status: 'verified' },
-  { name: 'Processing', value: 4200, color: 'hsl(217, 91%, 45%)', status: 'processing' },
+  { name: 'Processing', value: 4200, color: 'hsl(222, 47%, 20%)', status: 'processing' },
   { name: 'Pending', value: 6170, color: 'hsl(38, 92%, 50%)', status: 'pending' },
   { name: 'Paid', value: 2400, color: 'hsl(173, 58%, 39%)', status: 'paid' },
 ];
@@ -48,9 +48,10 @@ const StatusBreakdown = () => {
             </Pie>
             <Tooltip
               contentStyle={{
-                backgroundColor: 'hsl(222, 47%, 11%)',
-                border: '1px solid hsl(217, 33%, 20%)',
+                backgroundColor: 'hsl(0, 0%, 100%)',
+                border: '1px solid hsl(220, 13%, 91%)',
                 borderRadius: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
               formatter={(value: number) => [value.toLocaleString(), 'Bills']}
             />

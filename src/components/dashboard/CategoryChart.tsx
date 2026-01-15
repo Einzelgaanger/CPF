@@ -4,13 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { useFilters } from '@/contexts/FilterContext';
 
 const colors = [
-  'hsl(217, 91%, 45%)',
+  'hsl(222, 47%, 20%)',
   'hsl(142, 76%, 36%)',
   'hsl(43, 96%, 56%)',
   'hsl(173, 58%, 39%)',
   'hsl(38, 92%, 50%)',
   'hsl(0, 72%, 51%)',
-  'hsl(215, 20%, 55%)',
+  'hsl(215, 16%, 47%)',
 ];
 
 const CategoryChart = () => {
@@ -40,25 +40,26 @@ const CategoryChart = () => {
             layout="vertical"
             margin={{ left: 100, right: 20 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
             <XAxis 
               type="number"
-              stroke="hsl(215, 20%, 55%)"
-              tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+              stroke="hsl(215, 16%, 47%)"
+              tick={{ fill: 'hsl(215, 16%, 47%)', fontSize: 12 }}
               tickFormatter={(value) => `${value}B`}
             />
             <YAxis 
               type="category"
               dataKey="category"
-              stroke="hsl(215, 20%, 55%)"
-              tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+              stroke="hsl(215, 16%, 47%)"
+              tick={{ fill: 'hsl(215, 16%, 47%)', fontSize: 12 }}
               width={100}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'hsl(222, 47%, 11%)',
-                border: '1px solid hsl(217, 33%, 20%)',
+                backgroundColor: 'hsl(0, 0%, 100%)',
+                border: '1px solid hsl(220, 13%, 91%)',
                 borderRadius: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
               formatter={(value: number) => [`KES ${value}B`, 'Amount']}
             />

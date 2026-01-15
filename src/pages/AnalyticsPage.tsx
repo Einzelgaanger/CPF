@@ -28,14 +28,24 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 const COLORS = [
-  'hsl(217, 91%, 45%)',
+  'hsl(222, 47%, 20%)',
   'hsl(142, 76%, 36%)',
   'hsl(43, 96%, 56%)',
   'hsl(173, 58%, 39%)',
   'hsl(38, 92%, 50%)',
   'hsl(0, 72%, 51%)',
-  'hsl(215, 20%, 55%)',
+  'hsl(215, 16%, 47%)',
 ];
+
+const tooltipStyle = {
+  backgroundColor: 'hsl(0, 0%, 100%)',
+  border: '1px solid hsl(220, 13%, 91%)',
+  borderRadius: '8px',
+  boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+};
+
+const gridColor = 'hsl(220, 13%, 91%)';
+const axisColor = 'hsl(215, 16%, 47%)';
 
 const AnalyticsPage = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'distribution' | 'trends' | 'geography'>('overview');
@@ -112,26 +122,20 @@ const AnalyticsPage = () => {
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={rangeData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                       <XAxis 
                         dataKey="range" 
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 10 }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor, fontSize: 10 }}
                         angle={-45}
                         textAnchor="end"
                         height={80}
                       />
                       <YAxis 
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor, fontSize: 12 }}
                       />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'hsl(222, 47%, 11%)',
-                          border: '1px solid hsl(217, 33%, 20%)',
-                          borderRadius: '8px',
-                        }}
-                      />
+                      <Tooltip contentStyle={tooltipStyle} />
                       <Bar dataKey="numberOfBills" name="Number of Bills" radius={[4, 4, 0, 0]}>
                         {rangeData.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={entry.fill} />
@@ -147,25 +151,21 @@ const AnalyticsPage = () => {
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={rangeData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                       <XAxis 
                         dataKey="range" 
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 10 }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor, fontSize: 10 }}
                         angle={-45}
                         textAnchor="end"
                         height={80}
                       />
                       <YAxis 
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor, fontSize: 12 }}
                       />
                       <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'hsl(222, 47%, 11%)',
-                          border: '1px solid hsl(217, 33%, 20%)',
-                          borderRadius: '8px',
-                        }}
+                        contentStyle={tooltipStyle}
                         formatter={(value: number) => [`KES ${value}B`]}
                       />
                       <Bar dataKey="amountBillion" name="Amount (Billion)" radius={[4, 4, 0, 0]}>
@@ -187,38 +187,32 @@ const AnalyticsPage = () => {
                   <AreaChart data={rangeData}>
                     <defs>
                       <linearGradient id="colorPercent" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="hsl(217, 91%, 45%)" stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor="hsl(217, 91%, 45%)" stopOpacity={0}/>
+                        <stop offset="5%" stopColor="hsl(222, 47%, 20%)" stopOpacity={0.3}/>
+                        <stop offset="95%" stopColor="hsl(222, 47%, 20%)" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                     <XAxis 
                       dataKey="range" 
-                      stroke="hsl(215, 20%, 55%)"
-                      tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 10 }}
+                      stroke={axisColor}
+                      tick={{ fill: axisColor, fontSize: 10 }}
                       angle={-45}
                       textAnchor="end"
                       height={80}
                     />
                     <YAxis 
-                      stroke="hsl(215, 20%, 55%)"
-                      tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                      stroke={axisColor}
+                      tick={{ fill: axisColor, fontSize: 12 }}
                       domain={[0, 100]}
                       tickFormatter={(v) => `${v}%`}
                     />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(222, 47%, 11%)',
-                        border: '1px solid hsl(217, 33%, 20%)',
-                        borderRadius: '8px',
-                      }}
-                    />
+                    <Tooltip contentStyle={tooltipStyle} />
                     <Legend />
                     <Area 
                       type="monotone" 
                       dataKey="percentByNumber" 
                       name="% by Number" 
-                      stroke="hsl(217, 91%, 45%)"
+                      stroke="hsl(222, 47%, 20%)"
                       fill="url(#colorPercent)"
                     />
                     <Line 
@@ -259,11 +253,7 @@ const AnalyticsPage = () => {
                         ))}
                       </Pie>
                       <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'hsl(222, 47%, 11%)',
-                          border: '1px solid hsl(217, 33%, 20%)',
-                          borderRadius: '8px',
-                        }}
+                        contentStyle={tooltipStyle}
                         formatter={(value: number) => [`KES ${value}B`]}
                       />
                     </PieChart>
@@ -277,26 +267,20 @@ const AnalyticsPage = () => {
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={categoryBreakdown} layout="vertical" margin={{ left: 100 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                       <XAxis 
                         type="number"
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)' }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor }}
                       />
                       <YAxis 
                         type="category"
                         dataKey="category"
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor, fontSize: 12 }}
                         width={100}
                       />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'hsl(222, 47%, 11%)',
-                          border: '1px solid hsl(217, 33%, 20%)',
-                          borderRadius: '8px',
-                        }}
-                      />
+                      <Tooltip contentStyle={tooltipStyle} />
                       <Bar dataKey="bills" name="Number of Bills" radius={[0, 4, 4, 0]}>
                         {categoryBreakdown.map((entry, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -361,23 +345,17 @@ const AnalyticsPage = () => {
               <div className="h-96">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={monthlyTrends}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                     <XAxis 
                       dataKey="month" 
-                      stroke="hsl(215, 20%, 55%)"
-                      tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                      stroke={axisColor}
+                      tick={{ fill: axisColor, fontSize: 12 }}
                     />
                     <YAxis 
-                      stroke="hsl(215, 20%, 55%)"
-                      tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                      stroke={axisColor}
+                      tick={{ fill: axisColor, fontSize: 12 }}
                     />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(222, 47%, 11%)',
-                        border: '1px solid hsl(217, 33%, 20%)',
-                        borderRadius: '8px',
-                      }}
-                    />
+                    <Tooltip contentStyle={tooltipStyle} />
                     <Legend />
                     <Line 
                       type="monotone" 
@@ -420,22 +398,18 @@ const AnalyticsPage = () => {
                         <stop offset="95%" stopColor="hsl(43, 96%, 56%)" stopOpacity={0}/>
                       </linearGradient>
                     </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+                    <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                     <XAxis 
                       dataKey="month" 
-                      stroke="hsl(215, 20%, 55%)"
-                      tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                      stroke={axisColor}
+                      tick={{ fill: axisColor, fontSize: 12 }}
                     />
                     <YAxis 
-                      stroke="hsl(215, 20%, 55%)"
-                      tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                      stroke={axisColor}
+                      tick={{ fill: axisColor, fontSize: 12 }}
                     />
                     <Tooltip
-                      contentStyle={{
-                        backgroundColor: 'hsl(222, 47%, 11%)',
-                        border: '1px solid hsl(217, 33%, 20%)',
-                        borderRadius: '8px',
-                      }}
+                      contentStyle={tooltipStyle}
                       formatter={(value: number) => [`KES ${value}B`]}
                     />
                     <Area 
@@ -461,27 +435,21 @@ const AnalyticsPage = () => {
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={countyBreakdown} layout="vertical" margin={{ left: 80 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                       <XAxis 
                         type="number"
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)' }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor }}
                       />
                       <YAxis 
                         type="category"
                         dataKey="county"
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor, fontSize: 12 }}
                         width={80}
                       />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'hsl(222, 47%, 11%)',
-                          border: '1px solid hsl(217, 33%, 20%)',
-                          borderRadius: '8px',
-                        }}
-                      />
-                      <Bar dataKey="bills" name="Bills" fill="hsl(217, 91%, 45%)" radius={[0, 4, 4, 0]} />
+                      <Tooltip contentStyle={tooltipStyle} />
+                      <Bar dataKey="bills" name="Bills" fill="hsl(222, 47%, 20%)" radius={[0, 4, 4, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -492,26 +460,22 @@ const AnalyticsPage = () => {
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={countyBreakdown} layout="vertical" margin={{ left: 80 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                       <XAxis 
                         type="number"
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)' }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor }}
                         tickFormatter={(v) => `${v}B`}
                       />
                       <YAxis 
                         type="category"
                         dataKey="county"
-                        stroke="hsl(215, 20%, 55%)"
-                        tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+                        stroke={axisColor}
+                        tick={{ fill: axisColor, fontSize: 12 }}
                         width={80}
                       />
                       <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'hsl(222, 47%, 11%)',
-                          border: '1px solid hsl(217, 33%, 20%)',
-                          borderRadius: '8px',
-                        }}
+                        contentStyle={tooltipStyle}
                         formatter={(value: number) => [`KES ${value}B`]}
                       />
                       <Bar dataKey="amount" name="Amount" fill="hsl(43, 96%, 56%)" radius={[0, 4, 4, 0]} />

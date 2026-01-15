@@ -49,21 +49,22 @@ const TrendChart = () => {
                 <stop offset="95%" stopColor="hsl(173, 58%, 39%)" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(217, 33%, 20%)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(220, 13%, 91%)" />
             <XAxis 
               dataKey="month" 
-              stroke="hsl(215, 20%, 55%)"
-              tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+              stroke="hsl(215, 16%, 47%)"
+              tick={{ fill: 'hsl(215, 16%, 47%)', fontSize: 12 }}
             />
             <YAxis 
-              stroke="hsl(215, 20%, 55%)"
-              tick={{ fill: 'hsl(215, 20%, 55%)', fontSize: 12 }}
+              stroke="hsl(215, 16%, 47%)"
+              tick={{ fill: 'hsl(215, 16%, 47%)', fontSize: 12 }}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: 'hsl(222, 47%, 11%)',
-                border: '1px solid hsl(217, 33%, 20%)',
+                backgroundColor: 'hsl(0, 0%, 100%)',
+                border: '1px solid hsl(220, 13%, 91%)',
                 borderRadius: '8px',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
               }}
             />
             <Legend />
