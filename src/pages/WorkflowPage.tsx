@@ -5,13 +5,6 @@ import { Check, Clock, Users, Building, Landmark, Briefcase, TrendingUp, FileTex
 import { cn } from '@/lib/utils';
 
 const entityIcons = { supplier: Users, mda: Building, treasury: Landmark, spv: Briefcase, investor: TrendingUp };
-const entityColors = {
-  supplier: 'bg-destructive text-destructive-foreground',
-  mda: 'bg-accent text-accent-foreground',
-  treasury: 'bg-primary text-primary-foreground',
-  spv: 'bg-warning text-warning-foreground',
-  investor: 'bg-success text-success-foreground',
-};
 
 const WorkflowPage = () => {
   const [selectedStep, setSelectedStep] = useState<TransactionStep>(transactionSteps[3]);
@@ -36,7 +29,7 @@ const WorkflowPage = () => {
           </div>
 
           <div className="h-2 bg-secondary rounded-full overflow-hidden mb-5">
-            <div className="h-full bg-accent rounded-full" style={{ width: `${progress}%` }} />
+            <div className="h-full bg-foreground/20 rounded-full" style={{ width: `${progress}%` }} />
           </div>
 
           {/* Entities */}
@@ -54,18 +47,19 @@ const WorkflowPage = () => {
                 <div key={entity.type} className="flex items-center gap-1">
                   <button
                     className={cn(
-                      "flex-1 px-2 py-3 rounded-md text-center transition-all",
-                      entityColors[entity.type as keyof typeof entityColors],
-                      isActive && "ring-2 ring-offset-2 ring-offset-background ring-foreground/20"
+                      "flex-1 px-2 py-3 rounded-md text-center transition-all border",
+                      isActive 
+                        ? "bg-secondary border-border" 
+                        : "bg-card border-border hover:bg-secondary/50"
                     )}
                     onClick={() => {
                       const step = transactionSteps.find(s => s.entityType === entity.type);
                       if (step) setSelectedStep(step);
                     }}
                   >
-                    <Icon className="w-4 h-4 mx-auto mb-1" />
-                    <div className="text-xs font-medium">{entity.label}</div>
-                    <div className="text-xs opacity-75">{entity.sub}</div>
+                    <Icon className="w-4 h-4 mx-auto mb-1 text-muted-foreground" />
+                    <div className="text-xs font-medium text-foreground">{entity.label}</div>
+                    <div className="text-xs text-muted-foreground">{entity.sub}</div>
                   </button>
                   {i < 4 && <ArrowRight className="w-3 h-3 text-muted-foreground shrink-0" />}
                 </div>
@@ -87,14 +81,14 @@ const WorkflowPage = () => {
                   onClick={() => setSelectedStep(step)}
                   className={cn(
                     "w-full p-3 text-left transition-colors hover:bg-secondary/50",
-                    selectedStep.step === step.step && "bg-accent/5 border-l-2 border-l-accent"
+                    selectedStep.step === step.step && "bg-secondary"
                   )}
                 >
                   <div className="flex items-start gap-3">
                     <div className={cn(
-                      "w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold shrink-0",
-                      step.status === 'completed' ? 'bg-success text-success-foreground' :
-                      step.status === 'active' ? 'bg-accent text-accent-foreground' : 'bg-secondary text-muted-foreground'
+                      "w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold shrink-0 border",
+                      step.status === 'completed' ? 'bg-success/10 text-success border-success/20' :
+                      step.status === 'active' ? 'bg-accent/10 text-accent border-accent/20' : 'bg-secondary text-muted-foreground border-border'
                     )}>
                       {step.status === 'completed' ? <Check className="w-3.5 h-3.5" /> : step.step}
                     </div>
@@ -105,7 +99,7 @@ const WorkflowPage = () => {
                       </div>
                       <p className="text-xs text-muted-foreground line-clamp-1">{step.description}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className={cn("px-1.5 py-0.5 rounded text-xs", entityColors[step.entityType])}>{step.entity}</span>
+                        <span className="px-1.5 py-0.5 rounded text-xs bg-secondary text-muted-foreground">{step.entity}</span>
                         {step.completedDate && <span className="text-xs text-muted-foreground">✓ {step.completedDate}</span>}
                       </div>
                     </div>
@@ -121,9 +115,9 @@ const WorkflowPage = () => {
             <div className="glass-card p-5">
               <div className="flex items-center gap-3 mb-3">
                 <div className={cn(
-                  "w-9 h-9 rounded-md flex items-center justify-center font-semibold",
-                  selectedStep.status === 'completed' ? 'bg-success text-success-foreground' :
-                  selectedStep.status === 'active' ? 'bg-accent text-accent-foreground' : 'bg-secondary text-muted-foreground'
+                  "w-9 h-9 rounded-md flex items-center justify-center font-semibold border",
+                  selectedStep.status === 'completed' ? 'bg-success/10 text-success border-success/20' :
+                  selectedStep.status === 'active' ? 'bg-accent/10 text-accent border-accent/20' : 'bg-secondary text-muted-foreground border-border'
                 )}>
                   {selectedStep.status === 'completed' ? <Check className="w-4 h-4" /> : selectedStep.step}
                 </div>

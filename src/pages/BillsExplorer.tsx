@@ -38,7 +38,7 @@ const BillsExplorer = () => {
       key: 'id',
       header: 'Bill ID',
       sortable: true,
-      render: (bill: Bill) => <span className="font-mono text-xs text-accent font-medium">{bill.id}</span>,
+      render: (bill: Bill) => <span className="font-mono text-xs font-medium text-foreground">{bill.id}</span>,
     },
     {
       key: 'supplierName',
@@ -118,11 +118,11 @@ const BillsExplorer = () => {
 
           <div className="flex-1 space-y-4">
             {/* Banner */}
-            <div className="glass-card p-4 border-l-2 border-l-accent">
+            <div className="glass-card p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-md bg-accent/10">
-                    <FileText className="w-4 h-4 text-accent" />
+                  <div className="p-2 rounded-md bg-secondary">
+                    <FileText className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <div>
                     <h3 className="text-sm font-semibold text-foreground">Bill Verification</h3>
@@ -131,14 +131,14 @@ const BillsExplorer = () => {
                 </div>
                 <div className="flex items-center gap-4">
                   {[
-                    { label: 'Awaiting', value: filteredBills.filter(b => b.status === 'pending').length, color: 'text-muted-foreground' },
-                    { label: 'Verifying', value: filteredBills.filter(b => b.status === 'processing').length, color: 'text-warning' },
-                    { label: 'Verified', value: filteredBills.filter(b => b.status === 'verified').length, color: 'text-success' },
+                    { label: 'Awaiting', value: filteredBills.filter(b => b.status === 'pending').length },
+                    { label: 'Verifying', value: filteredBills.filter(b => b.status === 'processing').length },
+                    { label: 'Verified', value: filteredBills.filter(b => b.status === 'verified').length },
                   ].map((s, i) => (
                     <div key={s.label} className="flex items-center gap-4">
                       {i > 0 && <div className="h-6 w-px bg-border" />}
                       <div className="text-center">
-                        <p className={`text-lg font-semibold ${s.color}`}>{s.value}</p>
+                        <p className="text-lg font-semibold text-foreground">{s.value}</p>
                         <p className="text-xs text-muted-foreground">{s.label}</p>
                       </div>
                     </div>
@@ -156,8 +156,8 @@ const BillsExplorer = () => {
                 return (
                   <div key={status} className="glass-card p-3">
                     <div className="flex items-center gap-2.5">
-                      <div className={`p-1.5 rounded-md ${getStatusColor(status)}`}>
-                        <Icon className="w-3.5 h-3.5" />
+                      <div className="p-1.5 rounded-md bg-secondary">
+                        <Icon className="w-3.5 h-3.5 text-muted-foreground" />
                       </div>
                       <div>
                         <p className="text-lg font-semibold text-foreground">{count}</p>
@@ -220,7 +220,7 @@ const BillsExplorer = () => {
                 </div>
               )}
               <div className="flex gap-2">
-                <button className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:opacity-90 transition-colors">Process</button>
+                <button className="flex-1 px-4 py-2 bg-foreground text-background rounded-md text-sm font-medium hover:opacity-90 transition-colors">Process</button>
                 <button className="px-4 py-2 bg-secondary border border-border rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors">Documents</button>
               </div>
             </div>

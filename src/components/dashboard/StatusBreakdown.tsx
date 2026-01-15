@@ -4,9 +4,9 @@ import { useFilters } from '@/contexts/FilterContext';
 
 const data = [
   { name: 'Verified', value: 15420, color: 'hsl(160, 50%, 40%)', status: 'verified' },
-  { name: 'Processing', value: 4200, color: 'hsl(180, 45%, 40%)', status: 'processing' },
+  { name: 'Processing', value: 4200, color: 'hsl(220, 10%, 50%)', status: 'processing' },
   { name: 'Pending', value: 6170, color: 'hsl(40, 85%, 55%)', status: 'pending' },
-  { name: 'Paid', value: 2400, color: 'hsl(220, 20%, 18%)', status: 'paid' },
+  { name: 'Paid', value: 2400, color: 'hsl(220, 25%, 12%)', status: 'paid' },
 ];
 
 const StatusBreakdown = () => {

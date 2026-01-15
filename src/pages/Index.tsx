@@ -25,28 +25,28 @@ const Index = () => {
       
       <div className="p-6 space-y-6">
         {/* Hero */}
-        <div className="glass-card p-5 bg-primary text-primary-foreground border-0">
+        <div className="glass-card p-5 border-l-2 border-l-accent">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-white/15 rounded text-xs font-medium mb-2">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 bg-secondary rounded text-xs font-medium text-muted-foreground mb-2">
                 <Clock className="w-3.5 h-3.5" />
                 Phase 1: Fast-Track Settlement
               </div>
-              <h1 className="text-xl font-semibold mb-1">CPF Pending Bills Securitization</h1>
-              <p className="text-sm text-primary-foreground/75 max-w-lg">
+              <h1 className="text-xl font-semibold text-foreground mb-1">CPF Pending Bills Securitization</h1>
+              <p className="text-sm text-muted-foreground max-w-lg">
                 Settlement vehicle for verified government bills up to KES 2M.
               </p>
             </div>
             <div className="flex gap-2">
               <button 
                 onClick={() => navigate('/workflow')}
-                className="px-4 py-2 bg-white text-primary rounded-md text-sm font-medium hover:bg-white/90 transition-colors"
+                className="px-4 py-2 bg-foreground text-background rounded-md text-sm font-medium hover:opacity-90 transition-colors"
               >
                 View Workflow
               </button>
               <button 
                 onClick={() => navigate('/bills')}
-                className="px-4 py-2 bg-white/15 text-white rounded-md text-sm font-medium hover:bg-white/25 transition-colors"
+                className="px-4 py-2 bg-secondary border border-border text-foreground rounded-md text-sm font-medium hover:bg-secondary/80 transition-colors"
               >
                 Explore Bills
               </button>
@@ -140,7 +140,7 @@ const Index = () => {
               <h3 className="font-semibold text-foreground">Phase 1 Progress</h3>
               <button 
                 onClick={() => navigate('/workflow')}
-                className="text-xs text-accent font-medium flex items-center gap-1 hover:underline"
+                className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-foreground"
               >
                 Details <ArrowRight className="w-3 h-3" />
               </button>
@@ -159,7 +159,7 @@ const Index = () => {
                     <span className="text-xs font-medium text-foreground">{item.value}%</span>
                   </div>
                   <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-                    <div className="h-full bg-accent rounded-full" style={{ width: `${item.value}%` }} />
+                    <div className="h-full bg-foreground/20 rounded-full" style={{ width: `${item.value}%` }} />
                   </div>
                 </div>
               ))}

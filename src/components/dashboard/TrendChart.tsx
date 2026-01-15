@@ -30,7 +30,7 @@ const TrendChart = () => {
               className={cn(
                 "px-2.5 py-1 text-xs font-medium rounded-md transition-colors",
                 activePeriod === period 
-                  ? 'bg-primary text-primary-foreground' 
+                  ? 'bg-foreground text-background' 
                   : 'bg-secondary text-muted-foreground hover:text-foreground'
               )}
             >
@@ -88,9 +88,9 @@ const TrendChart = () => {
               type="monotone"
               dataKey="paid"
               name="Paid"
-              stroke="hsl(220, 20%, 18%)"
+              stroke="hsl(220, 25%, 12%)"
               strokeWidth={2}
-              fill="hsl(220, 20%, 18%)"
+              fill="hsl(220, 25%, 12%)"
               fillOpacity={0.1}
             />
           </AreaChart>

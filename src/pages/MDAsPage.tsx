@@ -4,7 +4,7 @@ import TopBar from '@/components/layout/TopBar';
 import DataTable from '@/components/common/DataTable';
 import { mdaData, MDA, formatCurrency } from '@/data/mockData';
 import { useFilters } from '@/contexts/FilterContext';
-import { Building2, Search, ArrowRight, FileText, DollarSign, CheckCircle } from 'lucide-react';
+import { Building2, Search, ArrowRight } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { cn } from '@/lib/utils';
 
@@ -33,8 +33,8 @@ const MDAsPage = () => {
     }));
 
   const categoryData = [
-    { name: 'Ministries', value: mdaData.filter(m => m.category === 'ministry').length, color: 'hsl(220, 20%, 18%)' },
-    { name: 'Agencies', value: mdaData.filter(m => m.category === 'agency').length, color: 'hsl(180, 45%, 40%)' },
+    { name: 'Ministries', value: mdaData.filter(m => m.category === 'ministry').length, color: 'hsl(220, 25%, 12%)' },
+    { name: 'Agencies', value: mdaData.filter(m => m.category === 'agency').length, color: 'hsl(220, 10%, 50%)' },
     { name: 'Counties', value: mdaData.filter(m => m.category === 'county').length, color: 'hsl(160, 50%, 40%)' },
   ];
 
@@ -50,8 +50,8 @@ const MDAsPage = () => {
       sortable: true,
       render: (mda: MDA) => (
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
-            <Building2 className="w-4 h-4 text-primary" />
+          <div className="w-8 h-8 rounded-md bg-secondary flex items-center justify-center">
+            <Building2 className="w-4 h-4 text-muted-foreground" />
           </div>
           <div>
             <p className="font-medium text-foreground text-sm">{mda.shortName}</p>
@@ -65,11 +65,7 @@ const MDAsPage = () => {
       header: 'Type',
       sortable: true,
       render: (mda: MDA) => (
-        <span className={cn(
-          "px-2 py-0.5 rounded text-xs font-medium capitalize",
-          mda.category === 'ministry' ? 'bg-primary/10 text-primary' :
-          mda.category === 'agency' ? 'bg-accent/10 text-accent' : 'bg-success/10 text-success'
-        )}>
+        <span className="px-2 py-0.5 rounded text-xs font-medium capitalize bg-secondary text-muted-foreground">
           {mda.category}
         </span>
       ),
@@ -111,7 +107,7 @@ const MDAsPage = () => {
         return (
           <div className="w-16">
             <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
-              <div className="h-full bg-accent rounded-full" style={{ width: `${pct}%` }} />
+              <div className="h-full bg-foreground/20 rounded-full" style={{ width: `${pct}%` }} />
             </div>
           </div>
         );
@@ -123,7 +119,7 @@ const MDAsPage = () => {
       render: (mda: MDA) => (
         <button 
           onClick={(e) => { e.stopPropagation(); handleViewBills(mda.id); }}
-          className="text-xs text-accent font-medium flex items-center gap-1 hover:underline"
+          className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-foreground"
         >
           View <ArrowRight className="w-3 h-3" />
         </button>
@@ -143,21 +139,14 @@ const MDAsPage = () => {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
-            { icon: Building2, label: 'Total MDAs', value: mdaData.length, color: 'primary' },
-            { icon: FileText, label: 'Total Bills', value: totalBills.toLocaleString(), color: 'accent' },
-            { icon: DollarSign, label: 'Total Value', value: formatCurrency(totalAmount, true), color: 'warning' },
-            { icon: CheckCircle, label: 'Verified', value: formatCurrency(totalVerified, true), color: 'success' },
+            { label: 'Total MDAs', value: mdaData.length },
+            { label: 'Total Bills', value: totalBills.toLocaleString() },
+            { label: 'Total Value', value: formatCurrency(totalAmount, true) },
+            { label: 'Verified', value: formatCurrency(totalVerified, true) },
           ].map((stat) => (
             <div key={stat.label} className="glass-card p-4">
-              <div className="flex items-center gap-3">
-                <div className={`p-2 rounded-md bg-${stat.color}/10`}>
-                  <stat.icon className={`w-4 h-4 text-${stat.color}`} />
-                </div>
-                <div>
-                  <p className="text-xl font-semibold text-foreground">{stat.value}</p>
-                  <p className="text-xs text-muted-foreground">{stat.label}</p>
-                </div>
-              </div>
+              <p className="text-xl font-semibold text-foreground">{stat.value}</p>
+              <p className="text-xs text-muted-foreground">{stat.label}</p>
             </div>
           ))}
         </div>
@@ -214,7 +203,7 @@ const MDAsPage = () => {
                   placeholder="Search..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-8 pr-3 py-1.5 bg-secondary border border-border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-accent w-48"
+                  className="pl-8 pr-3 py-1.5 bg-secondary border border-border rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-foreground/20 w-48"
                 />
               </div>
               <div className="flex gap-1">
@@ -224,7 +213,7 @@ const MDAsPage = () => {
                     onClick={() => setCategoryFilter(cat)}
                     className={cn(
                       "px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors capitalize",
-                      categoryFilter === cat ? 'bg-primary text-primary-foreground' : 'bg-secondary text-muted-foreground hover:text-foreground'
+                      categoryFilter === cat ? 'bg-foreground text-background' : 'bg-secondary text-muted-foreground hover:text-foreground'
                     )}
                   >
                     {cat === 'all' ? 'All' : cat}

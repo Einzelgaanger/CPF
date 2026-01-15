@@ -22,7 +22,7 @@ const RecentActivity = () => {
         </div>
         <button 
           onClick={() => navigate('/timeline')}
-          className="text-xs text-accent font-medium flex items-center gap-1 hover:underline"
+          className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-foreground"
         >
           View all <ArrowRight className="w-3 h-3" />
         </button>
@@ -40,7 +40,7 @@ const RecentActivity = () => {
               <div className={cn(
                 "w-8 h-8 rounded-md flex items-center justify-center shrink-0",
                 event.status === 'completed' ? 'bg-success/10 text-success' :
-                event.status === 'in-progress' ? 'bg-accent/10 text-accent' :
+                event.status === 'in-progress' ? 'bg-secondary text-muted-foreground' :
                 'bg-secondary text-muted-foreground'
               )}>
                 <Icon className="w-4 h-4" />
