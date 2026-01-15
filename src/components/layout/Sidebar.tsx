@@ -31,22 +31,22 @@ const Sidebar = () => {
   return (
     <aside 
       className={cn(
-        "fixed left-0 top-0 h-full bg-sidebar z-40 transition-all duration-200 flex flex-col",
+        "fixed left-0 top-0 h-full bg-card border-r border-border z-40 transition-all duration-200 flex flex-col",
         collapsed ? "w-16" : "w-56"
       )}
     >
       {/* Logo */}
-      <div className="h-14 flex items-center px-4 border-b border-sidebar-border">
+      <div className="h-14 flex items-center px-4 border-b border-border">
         {collapsed ? (
-          <div className="w-8 h-8 rounded bg-sidebar-primary flex items-center justify-center mx-auto">
-            <span className="text-xs font-bold text-sidebar-primary-foreground">C</span>
+          <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center mx-auto">
+            <span className="text-xs font-bold text-accent-foreground">C</span>
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded bg-sidebar-primary flex items-center justify-center">
-              <span className="text-xs font-bold text-sidebar-primary-foreground">CPF</span>
+            <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center">
+              <span className="text-xs font-bold text-accent-foreground">CPF</span>
             </div>
-            <span className="text-sm font-semibold text-sidebar-foreground">Securitization</span>
+            <span className="text-sm font-semibold text-foreground">Securitization</span>
           </div>
         )}
       </div>
@@ -62,13 +62,13 @@ const Sidebar = () => {
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors group relative",
                 isActive 
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground" 
-                  : "text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                  ? "bg-secondary text-foreground font-medium" 
+                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
               )}
             >
               <item.icon className="w-[18px] h-[18px] shrink-0" />
               {!collapsed && (
-                <span className="text-sm font-medium">{item.label}</span>
+                <span className="text-sm">{item.label}</span>
               )}
               {collapsed && (
                 <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background rounded text-xs font-medium opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
@@ -81,10 +81,10 @@ const Sidebar = () => {
       </nav>
 
       {/* Settings */}
-      <div className="p-2 border-t border-sidebar-border">
-        <button className="flex items-center gap-3 px-3 py-2.5 rounded-md w-full text-sidebar-muted hover:text-sidebar-foreground hover:bg-sidebar-accent/50 transition-colors">
+      <div className="p-2 border-t border-border">
+        <button className="flex items-center gap-3 px-3 py-2.5 rounded-md w-full text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors">
           <Settings className="w-[18px] h-[18px] shrink-0" />
-          {!collapsed && <span className="text-sm font-medium">Settings</span>}
+          {!collapsed && <span className="text-sm">Settings</span>}
         </button>
       </div>
 

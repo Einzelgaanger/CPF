@@ -1,4 +1,4 @@
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { categoryBreakdown } from '@/data/mockData';
 import { useNavigate } from 'react-router-dom';
 import { useFilters } from '@/contexts/FilterContext';
@@ -57,7 +57,7 @@ const CategoryChart = () => {
             />
             <Bar 
               dataKey="amount" 
-              fill="hsl(180, 45%, 40%)"
+              fill="hsl(220, 10%, 50%)"
               radius={[0, 3, 3, 0]}
               className="cursor-pointer"
               onClick={(data) => handleClick(data.category)}

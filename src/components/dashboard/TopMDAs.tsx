@@ -25,7 +25,7 @@ const TopMDAs = () => {
         </div>
         <button 
           onClick={() => navigate('/mdas')}
-          className="text-xs text-accent font-medium flex items-center gap-1 hover:underline"
+          className="text-xs text-muted-foreground font-medium flex items-center gap-1 hover:text-foreground"
         >
           View all <ArrowRight className="w-3 h-3" />
         </button>
@@ -42,7 +42,7 @@ const TopMDAs = () => {
               className="w-full text-left p-2.5 rounded-md hover:bg-secondary transition-colors"
             >
               <div className="flex items-center gap-2.5 mb-1.5">
-                <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center text-primary text-xs font-semibold">
+                <div className="w-6 h-6 rounded-md bg-secondary flex items-center justify-center text-foreground text-xs font-semibold">
                   {index + 1}
                 </div>
                 <span className="text-sm font-medium text-foreground flex-1 truncate">{mda.shortName}</span>
@@ -50,7 +50,7 @@ const TopMDAs = () => {
               </div>
               <div className="flex items-center gap-2 pl-8">
                 <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
-                  <div className="h-full bg-accent rounded-full" style={{ width: `${verifiedPct}%` }} />
+                  <div className="h-full bg-foreground/20 rounded-full" style={{ width: `${verifiedPct}%` }} />
                 </div>
                 <span className="text-xs text-muted-foreground w-10 text-right">{verifiedPct.toFixed(0)}%</span>
               </div>

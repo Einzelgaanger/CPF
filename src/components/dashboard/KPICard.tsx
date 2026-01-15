@@ -25,32 +25,17 @@ const KPICard = ({
   onClick,
   isClickable = false 
 }: KPICardProps) => {
-  const accentColor = {
-    default: 'border-l-primary',
-    accent: 'border-l-accent',
-    success: 'border-l-success',
-    warning: 'border-l-warning',
-  };
-
-  const iconBg = {
-    default: 'bg-primary/10 text-primary',
-    accent: 'bg-accent/10 text-accent',
-    success: 'bg-success/10 text-success',
-    warning: 'bg-warning/10 text-warning',
-  };
-
   return (
     <div 
       onClick={onClick}
       className={cn(
-        "glass-card p-4 border-l-2 transition-colors",
-        accentColor[variant],
+        "glass-card p-4 transition-colors",
         isClickable && "cursor-pointer hover:bg-secondary/50"
       )}
     >
       <div className="flex items-start justify-between mb-3">
-        <div className={cn("p-2 rounded-md", iconBg[variant])}>
-          <Icon className="w-4 h-4" />
+        <div className="p-2 rounded-md bg-secondary">
+          <Icon className="w-4 h-4 text-muted-foreground" />
         </div>
         {trend && (
           <div className={cn(
