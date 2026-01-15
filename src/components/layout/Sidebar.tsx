@@ -1,26 +1,28 @@
 import { NavLink, useLocation } from "react-router-dom";
 import { 
   LayoutDashboard, 
-  FileText, 
+  FileSearch, 
   Building2, 
   Users, 
-  GitBranch, 
-  BarChart3, 
+  Workflow, 
+  TrendingUp, 
   Calendar,
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import CPFLogo from "@/components/CPFLogo";
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, label: "Dashboard", description: "Overview & KPIs" },
-  { path: "/bills", icon: FileText, label: "Bills Explorer", description: "Detailed bills data" },
-  { path: "/workflow", icon: GitBranch, label: "Transaction Flow", description: "Settlement process" },
+  { path: "/bills", icon: FileSearch, label: "Bills Explorer", description: "Detailed bills data" },
+  { path: "/workflow", icon: Workflow, label: "Transaction Flow", description: "Settlement process" },
   { path: "/mdas", icon: Building2, label: "MDAs", description: "Ministries & Agencies" },
   { path: "/suppliers", icon: Users, label: "Suppliers", description: "Supplier registry" },
-  { path: "/analytics", icon: BarChart3, label: "Analytics", description: "Charts & trends" },
+  { path: "/analytics", icon: TrendingUp, label: "Analytics", description: "Charts & trends" },
   { path: "/timeline", icon: Calendar, label: "Timeline", description: "Project milestones" },
 ];
 
@@ -36,22 +38,8 @@ const Sidebar = () => {
       )}
     >
       {/* Logo */}
-      <div className="p-4 border-b border-border">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-accent to-warning flex items-center justify-center shrink-0">
-            <Building2 className="w-6 h-6 text-accent-foreground" />
-          </div>
-          {!collapsed && (
-            <div className="overflow-hidden">
-              <h1 className="font-display text-lg font-bold text-foreground truncate">
-                CPF Platform
-              </h1>
-              <p className="text-xs text-muted-foreground truncate">
-                Securitization System
-              </p>
-            </div>
-          )}
-        </div>
+      <div className="p-4 border-b border-border/50">
+        <CPFLogo collapsed={collapsed} />
       </div>
 
       {/* Navigation */}
@@ -63,28 +51,40 @@ const Sidebar = () => {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-200 group relative",
+                "flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group relative",
+                "hover:scale-[1.02] active:scale-[0.98]",
                 isActive 
-                  ? "bg-primary text-primary-foreground" 
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? "bg-gradient-to-r from-primary to-primary/80 text-primary-foreground shadow-lg shadow-primary/20" 
+                  : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
               )}
             >
-              <item.icon className={cn("w-5 h-5 shrink-0", isActive && "text-primary-foreground")} />
+              <div className={cn(
+                "p-1.5 rounded-lg transition-all",
+                isActive 
+                  ? "bg-primary-foreground/20" 
+                  : "group-hover:bg-muted"
+              )}>
+                <item.icon className={cn(
+                  "w-5 h-5 shrink-0 transition-transform",
+                  isActive && "text-primary-foreground",
+                  "group-hover:scale-110"
+                )} />
+              </div>
               {!collapsed && (
-                <div className="overflow-hidden">
-                  <span className="font-medium text-sm">{item.label}</span>
+                <div className="overflow-hidden flex-1 min-w-0">
+                  <span className="font-semibold text-sm block truncate">{item.label}</span>
                   <p className={cn(
-                    "text-xs truncate",
-                    isActive ? "text-primary-foreground/70" : "text-muted-foreground"
+                    "text-xs truncate mt-0.5",
+                    isActive ? "text-primary-foreground/80" : "text-muted-foreground"
                   )}>
                     {item.description}
                   </p>
                 </div>
               )}
               {collapsed && (
-                <div className="absolute left-full ml-2 px-3 py-2 bg-popover border border-border rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
-                  <span className="font-medium text-sm text-foreground">{item.label}</span>
-                  <p className="text-xs text-muted-foreground">{item.description}</p>
+                <div className="absolute left-full ml-3 px-3 py-2 bg-popover border border-border rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 backdrop-blur-sm">
+                  <span className="font-semibold text-sm text-foreground block">{item.label}</span>
+                  <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
                 </div>
               )}
             </NavLink>
@@ -93,12 +93,15 @@ const Sidebar = () => {
       </nav>
 
       {/* Settings */}
-      <div className="p-3 border-t border-border">
+      <div className="p-3 border-t border-border/50">
         <button className={cn(
-          "flex items-center gap-3 px-3 py-3 rounded-lg w-full text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          "flex items-center gap-3 px-3 py-3 rounded-xl w-full text-muted-foreground hover:bg-muted/50 hover:text-foreground transition-all duration-200",
+          "hover:scale-[1.02] active:scale-[0.98]"
         )}>
-          <Settings className="w-5 h-5 shrink-0" />
-          {!collapsed && <span className="font-medium text-sm">Settings</span>}
+          <div className="p-1.5 rounded-lg hover:bg-muted transition-colors">
+            <Settings className="w-5 h-5 shrink-0 transition-transform hover:rotate-90" />
+          </div>
+          {!collapsed && <span className="font-semibold text-sm">Settings</span>}
         </button>
       </div>
 
