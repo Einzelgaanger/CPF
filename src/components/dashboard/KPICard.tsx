@@ -27,29 +27,28 @@ const KPICard = ({
   isClickable = false 
 }: KPICardProps) => {
   const variantStyles = {
-    default: 'from-primary/20 to-primary/5 hover:from-primary/30',
-    accent: 'from-accent/20 to-accent/5 hover:from-accent/30',
-    success: 'from-success/20 to-success/5 hover:from-success/30',
-    warning: 'from-warning/20 to-warning/5 hover:from-warning/30',
-    secondary: 'from-secondary/40 to-secondary/20 hover:from-secondary/50',
+    default: 'bg-card border border-border hover:border-primary/30 hover:shadow-md',
+    accent: 'bg-card border border-accent/30 hover:border-accent/50 hover:shadow-md',
+    success: 'bg-card border border-success/30 hover:border-success/50 hover:shadow-md',
+    warning: 'bg-card border border-warning/30 hover:border-warning/50 hover:shadow-md',
+    secondary: 'bg-card border border-border hover:border-primary/30 hover:shadow-md',
   };
 
   const iconStyles = {
-    default: 'bg-primary/20 text-primary',
-    accent: 'bg-accent/20 text-accent',
-    success: 'bg-success/20 text-success',
-    warning: 'bg-warning/20 text-warning',
-    secondary: 'bg-secondary text-secondary-foreground',
+    default: 'bg-primary/10 text-primary',
+    accent: 'bg-accent/15 text-accent-foreground',
+    success: 'bg-success/10 text-success',
+    warning: 'bg-warning/15 text-warning',
+    secondary: 'bg-muted text-muted-foreground',
   };
 
   return (
     <div 
       onClick={onClick}
       className={cn(
-        "relative overflow-hidden rounded-xl border border-border/50 p-6 transition-all duration-300",
-        "bg-gradient-to-br",
+        "relative overflow-hidden rounded-xl p-6 transition-all duration-300 shadow-sm",
         variantStyles[variant],
-        isClickable && "cursor-pointer hover:scale-[1.02] hover:shadow-lg"
+        isClickable && "cursor-pointer hover:scale-[1.02]"
       )}
     >
       <div className="flex items-start justify-between mb-4">
