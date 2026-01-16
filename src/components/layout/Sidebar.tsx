@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { 
   LayoutDashboard, 
   FileSearch, 
@@ -9,24 +9,33 @@ import {
   Calendar,
   Settings,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  LogOut
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 const navItems = [
-  { path: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { path: "/bills", icon: FileSearch, label: "Bills Explorer" },
-  { path: "/workflow", icon: Workflow, label: "Transaction Flow" },
-  { path: "/payment-schedule", icon: Calendar, label: "Payment Schedule" },
-  { path: "/mdas", icon: Building2, label: "MDAs" },
-  { path: "/suppliers", icon: Users, label: "Suppliers" },
-  { path: "/analytics", icon: TrendingUp, label: "Analytics" },
+  { path: "/admin", icon: LayoutDashboard, label: "Dashboard" },
+  { path: "/admin/bills", icon: FileSearch, label: "Bills Explorer" },
+  { path: "/admin/workflow", icon: Workflow, label: "Transaction Flow" },
+  { path: "/admin/payment-schedule", icon: Calendar, label: "Payment Schedule" },
+  { path: "/admin/mdas", icon: Building2, label: "MDAs" },
+  { path: "/admin/suppliers", icon: Users, label: "Suppliers" },
+  { path: "/admin/analytics", icon: TrendingUp, label: "Analytics" },
 ];
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/auth');
+  };
 
   return (
     <aside 
@@ -39,14 +48,14 @@ const Sidebar = () => {
       <div className="h-14 flex items-center px-4 border-b border-border">
         {collapsed ? (
           <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center mx-auto">
-            <span className="text-xs font-bold text-accent-foreground">C</span>
+            <span className="text-xs font-bold text-accent-foreground">A</span>
           </div>
         ) : (
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center">
               <span className="text-xs font-bold text-accent-foreground">CPF</span>
             </div>
-            <span className="text-sm font-semibold text-foreground">Securitization</span>
+            <span className="text-sm font-semibold text-foreground">Admin Portal</span>
           </div>
         )}
       </div>
@@ -80,11 +89,14 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* Settings */}
-      <div className="p-2 border-t border-border">
-        <button className="flex items-center gap-3 px-3 py-2.5 rounded-md w-full text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-colors">
-          <Settings className="w-[18px] h-[18px] shrink-0" />
-          {!collapsed && <span className="text-sm">Settings</span>}
+      {/* Sign Out */}
+      <div className="p-2 border-t border-border space-y-1">
+        <button 
+          onClick={handleSignOut}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-md w-full text-destructive hover:bg-destructive/10 transition-colors"
+        >
+          <LogOut className="w-[18px] h-[18px] shrink-0" />
+          {!collapsed && <span className="text-sm">Sign Out</span>}
         </button>
       </div>
 

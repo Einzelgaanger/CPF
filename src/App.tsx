@@ -22,16 +22,19 @@ import SupplierProfilePage from "./pages/supplier/SupplierProfilePage";
 import SPVDashboard from "./pages/spv/SPVDashboard";
 import SPVBillsPage from "./pages/spv/SPVBillsPage";
 import SPVOffersPage from "./pages/spv/SPVOffersPage";
+import SPVProfilePage from "./pages/spv/SPVProfilePage";
 
 // MDA Portal
 import MDADashboard from "./pages/mda/MDADashboard";
 import MDABillsPage from "./pages/mda/MDABillsPage";
 import MDAApprovedPage from "./pages/mda/MDAApprovedPage";
+import MDAProfilePage from "./pages/mda/MDAProfilePage";
 
 // Treasury Portal
 import TreasuryDashboard from "./pages/treasury/TreasuryDashboard";
 import TreasuryPendingPage from "./pages/treasury/TreasuryPendingPage";
 import TreasuryCertifiedPage from "./pages/treasury/TreasuryCertifiedPage";
+import TreasuryProfilePage from "./pages/treasury/TreasuryProfilePage";
 
 // Admin (existing pages)
 import AppLayout from "@/components/layout/AppLayout";
@@ -71,16 +74,19 @@ const App = () => (
                 <Route path="/spv" element={<ProtectedRoute allowedRoles={['spv']}><SPVDashboard /></ProtectedRoute>} />
                 <Route path="/spv/bills" element={<ProtectedRoute allowedRoles={['spv']}><SPVBillsPage /></ProtectedRoute>} />
                 <Route path="/spv/offers" element={<ProtectedRoute allowedRoles={['spv']}><SPVOffersPage /></ProtectedRoute>} />
+                <Route path="/spv/profile" element={<ProtectedRoute allowedRoles={['spv']}><SPVProfilePage /></ProtectedRoute>} />
 
                 {/* MDA Portal */}
                 <Route path="/mda" element={<ProtectedRoute allowedRoles={['mda']}><MDADashboard /></ProtectedRoute>} />
                 <Route path="/mda/bills" element={<ProtectedRoute allowedRoles={['mda']}><MDABillsPage /></ProtectedRoute>} />
                 <Route path="/mda/approved" element={<ProtectedRoute allowedRoles={['mda']}><MDAApprovedPage /></ProtectedRoute>} />
+                <Route path="/mda/profile" element={<ProtectedRoute allowedRoles={['mda']}><MDAProfilePage /></ProtectedRoute>} />
 
                 {/* Treasury Portal */}
                 <Route path="/treasury" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryDashboard /></ProtectedRoute>} />
                 <Route path="/treasury/pending" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryPendingPage /></ProtectedRoute>} />
                 <Route path="/treasury/certified" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryCertifiedPage /></ProtectedRoute>} />
+                <Route path="/treasury/profile" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryProfilePage /></ProtectedRoute>} />
 
                 {/* Admin Portal (existing) */}
                 <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><Index /></AppLayout></ProtectedRoute>} />
