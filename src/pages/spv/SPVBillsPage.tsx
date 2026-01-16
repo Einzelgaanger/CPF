@@ -5,13 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { FileText, Search, Filter, Wallet, Building2, Calendar, ExternalLink } from 'lucide-react';
+import { FileText, Search, Wallet, Building2, Calendar, Eye } from 'lucide-react';
 import { format } from 'date-fns';
+import BillDetailModal, { BillDetails } from '@/components/bills/BillDetailModal';
+import SPVOfferForm from '@/components/bills/SPVOfferForm';
 
 interface Bill {
   id: string;
@@ -37,9 +38,14 @@ interface MDA {
 }
 
 interface Profile {
-  id: string;
+  user_id: string;
   company_name: string | null;
   full_name: string | null;
+  address: string | null;
+  registration_number: string | null;
+  tax_id: string | null;
+  bank_name: string | null;
+  bank_account: string | null;
 }
 
 const SPVBillsPage = () => {
@@ -51,9 +57,8 @@ const SPVBillsPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [mdaFilter, setMdaFilter] = useState('all');
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [showOfferModal, setShowOfferModal] = useState(false);
-  const [offerAmount, setOfferAmount] = useState('');
-  const [discountRate, setDiscountRate] = useState('5');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -83,13 +88,13 @@ const SPVBillsPage = () => {
         if (supplierIds.length > 0) {
           const { data: profileData } = await supabase
             .from('profiles')
-            .select('user_id, company_name, full_name')
+            .select('user_id, company_name, full_name, address, registration_number, tax_id, bank_name, bank_account')
             .in('user_id', supplierIds);
           
           if (profileData) {
             const supplierMap: Record<string, Profile> = {};
             profileData.forEach(p => { 
-              supplierMap[p.user_id] = { id: p.user_id, company_name: p.company_name, full_name: p.full_name }; 
+              supplierMap[p.user_id] = p as Profile; 
             });
             setSuppliers(supplierMap);
           }
@@ -102,14 +107,25 @@ const SPVBillsPage = () => {
     fetchData();
   }, []);
 
-  const handleMakeOffer = async () => {
-    if (!selectedBill || !user) return;
+  const getBillDetails = (bill: Bill): BillDetails => {
+    const supplier = suppliers[bill.supplier_id];
+    const mda = mdas[bill.mda_id];
+    return {
+      ...bill,
+      supplier_name: supplier?.full_name || undefined,
+      supplier_company: supplier?.company_name || undefined,
+      supplier_address: supplier?.address || undefined,
+      supplier_registration: supplier?.registration_number || undefined,
+      supplier_tax_id: supplier?.tax_id || undefined,
+      supplier_bank_name: supplier?.bank_name || undefined,
+      supplier_bank_account: supplier?.bank_account || undefined,
+      mda_name: mda?.name || undefined,
+      mda_code: mda?.code || undefined,
+    };
+  };
 
-    const amount = parseFloat(offerAmount);
-    if (isNaN(amount) || amount <= 0) {
-      toast.error('Please enter a valid offer amount');
-      return;
-    }
+  const handleMakeOffer = async (offerAmount: number, discountRate: number) => {
+    if (!selectedBill || !user) return;
 
     setSubmitting(true);
 
@@ -119,19 +135,18 @@ const SPVBillsPage = () => {
         .update({
           status: 'offer_made',
           spv_id: user.id,
-          offer_amount: amount,
-          offer_discount_rate: parseFloat(discountRate),
+          offer_amount: offerAmount,
+          offer_discount_rate: discountRate,
           offer_date: new Date().toISOString(),
         })
         .eq('id', selectedBill.id);
 
       if (error) throw error;
 
-      // Create notification for supplier
       await supabase.from('notifications').insert({
         user_id: selectedBill.supplier_id,
         title: 'New Offer Received!',
-        message: `You received an offer of ₦${amount.toLocaleString()} for invoice ${selectedBill.invoice_number}`,
+        message: `You received an offer of ₦${offerAmount.toLocaleString()} for invoice ${selectedBill.invoice_number}`,
         type: 'success',
         bill_id: selectedBill.id,
       });
@@ -140,7 +155,6 @@ const SPVBillsPage = () => {
       toast.success('Offer submitted successfully!');
       setShowOfferModal(false);
       setSelectedBill(null);
-      setOfferAmount('');
     } catch (error) {
       console.error('Offer error:', error);
       toast.error('Failed to submit offer');
@@ -149,19 +163,14 @@ const SPVBillsPage = () => {
     }
   };
 
-  const openOfferModal = (bill: Bill) => {
+  const openDetailModal = (bill: Bill) => {
     setSelectedBill(bill);
-    const suggestedOffer = Number(bill.amount) * (1 - parseFloat(discountRate) / 100);
-    setOfferAmount(suggestedOffer.toFixed(2));
-    setShowOfferModal(true);
+    setShowDetailModal(true);
   };
 
-  const updateDiscount = (rate: string) => {
-    setDiscountRate(rate);
-    if (selectedBill) {
-      const suggestedOffer = Number(selectedBill.amount) * (1 - parseFloat(rate) / 100);
-      setOfferAmount(suggestedOffer.toFixed(2));
-    }
+  const openOfferModal = (bill: Bill) => {
+    setSelectedBill(bill);
+    setShowOfferModal(true);
   };
 
   const filteredBills = bills.filter(bill => {
@@ -283,19 +292,20 @@ const SPVBillsPage = () => {
 
                   <div className="flex gap-2 pt-2">
                     <Button 
+                      variant="outline"
+                      className="flex-1" 
+                      onClick={() => openDetailModal(bill)}
+                    >
+                      <Eye className="w-4 h-4 mr-2" />
+                      View Details
+                    </Button>
+                    <Button 
                       className="flex-1" 
                       onClick={() => openOfferModal(bill)}
                     >
                       <Wallet className="w-4 h-4 mr-2" />
                       Make Offer
                     </Button>
-                    {bill.invoice_document_url && (
-                      <Button variant="outline" size="icon" asChild>
-                        <a href={bill.invoice_document_url} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      </Button>
-                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -303,75 +313,38 @@ const SPVBillsPage = () => {
           )}
         </div>
 
+        {/* Bill Detail Modal */}
+        {selectedBill && (
+          <BillDetailModal
+            bill={getBillDetails(selectedBill)}
+            open={showDetailModal}
+            onOpenChange={setShowDetailModal}
+            actionButton={
+              <Button onClick={() => { setShowDetailModal(false); setShowOfferModal(true); }}>
+                <Wallet className="w-4 h-4 mr-2" />
+                Make Offer
+              </Button>
+            }
+          />
+        )}
+
         {/* Offer Modal */}
         <Dialog open={showOfferModal} onOpenChange={setShowOfferModal}>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Make an Offer</DialogTitle>
-              <DialogDescription>
-                Submit your offer for invoice {selectedBill?.invoice_number}
-              </DialogDescription>
             </DialogHeader>
             
             {selectedBill && (
-              <div className="space-y-4 py-4">
-                <div className="p-4 bg-secondary rounded-lg">
-                  <div className="flex justify-between mb-2">
-                    <span className="text-muted-foreground">Invoice Amount</span>
-                    <span className="font-bold">₦{Number(selectedBill.amount).toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">MDA</span>
-                    <span>{mdas[selectedBill.mda_id]?.name}</span>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="discount">Discount Rate (%)</Label>
-                  <Select value={discountRate} onValueChange={updateDiscount}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="3">3%</SelectItem>
-                      <SelectItem value="5">5%</SelectItem>
-                      <SelectItem value="7">7%</SelectItem>
-                      <SelectItem value="10">10%</SelectItem>
-                      <SelectItem value="12">12%</SelectItem>
-                      <SelectItem value="15">15%</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="offer">Your Offer Amount (₦)</Label>
-                  <Input
-                    id="offer"
-                    type="number"
-                    value={offerAmount}
-                    onChange={(e) => setOfferAmount(e.target.value)}
-                    placeholder="Enter offer amount"
-                  />
-                </div>
-
-                <div className="p-4 bg-accent/10 rounded-lg">
-                  <p className="text-sm text-muted-foreground">
-                    You will pay <span className="font-bold text-accent">₦{parseFloat(offerAmount || '0').toLocaleString()}</span> now 
-                    and receive <span className="font-bold">₦{Number(selectedBill.amount).toLocaleString()}</span> when 
-                    the government pays.
-                  </p>
-                </div>
-              </div>
+              <SPVOfferForm
+                billAmount={Number(selectedBill.amount)}
+                supplierCompany={suppliers[selectedBill.supplier_id]?.company_name || undefined}
+                mdaName={mdas[selectedBill.mda_id]?.name}
+                invoiceNumber={selectedBill.invoice_number}
+                onSubmit={handleMakeOffer}
+                submitting={submitting}
+              />
             )}
-
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setShowOfferModal(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleMakeOffer} disabled={submitting}>
-                {submitting ? 'Submitting...' : 'Submit Offer'}
-              </Button>
-            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
