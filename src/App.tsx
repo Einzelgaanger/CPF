@@ -36,15 +36,13 @@ import TreasuryPendingPage from "./pages/treasury/TreasuryPendingPage";
 import TreasuryCertifiedPage from "./pages/treasury/TreasuryCertifiedPage";
 import TreasuryProfilePage from "./pages/treasury/TreasuryProfilePage";
 
-// Admin (existing pages)
+// Admin Portal
 import AppLayout from "@/components/layout/AppLayout";
-import Index from "./pages/Index";
-import BillsExplorer from "./pages/BillsExplorer";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminBillsPage from "./pages/admin/AdminBillsPage";
+import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import WorkflowPage from "./pages/WorkflowPage";
-import MDAsPage from "./pages/MDAsPage";
-import SuppliersPage from "./pages/SuppliersPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
-import TimelinePage from "./pages/TimelinePage";
 import PaymentSchedulePage from "./pages/PaymentSchedulePage";
 import NotFound from "./pages/NotFound";
 
@@ -88,14 +86,13 @@ const App = () => (
                 <Route path="/treasury/certified" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryCertifiedPage /></ProtectedRoute>} />
                 <Route path="/treasury/profile" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryProfilePage /></ProtectedRoute>} />
 
-                {/* Admin Portal (existing) */}
-                <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><Index /></AppLayout></ProtectedRoute>} />
-                <Route path="/admin/bills" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><BillsExplorer /></AppLayout></ProtectedRoute>} />
+                {/* Admin Portal */}
+                <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminDashboard /></AppLayout></ProtectedRoute>} />
+                <Route path="/admin/bills" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminBillsPage /></AppLayout></ProtectedRoute>} />
                 <Route path="/admin/workflow" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><WorkflowPage /></AppLayout></ProtectedRoute>} />
-                <Route path="/admin/mdas" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><MDAsPage /></AppLayout></ProtectedRoute>} />
-                <Route path="/admin/suppliers" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><SuppliersPage /></AppLayout></ProtectedRoute>} />
+                <Route path="/admin/suppliers" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminUsersPage /></AppLayout></ProtectedRoute>} />
+                <Route path="/admin/mdas" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><AdminUsersPage /></AppLayout></ProtectedRoute>} />
                 <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><AnalyticsPage /></AppLayout></ProtectedRoute>} />
-                <Route path="/admin/timeline" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><TimelinePage /></AppLayout></ProtectedRoute>} />
                 <Route path="/admin/payment-schedule" element={<ProtectedRoute allowedRoles={['admin']}><AppLayout><PaymentSchedulePage /></AppLayout></ProtectedRoute>} />
 
                 {/* Root redirect to auth */}
