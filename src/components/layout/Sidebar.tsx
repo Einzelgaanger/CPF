@@ -7,10 +7,11 @@ import {
   Workflow, 
   TrendingUp, 
   Calendar,
-  Settings,
+  LogOut,
   ChevronLeft,
   ChevronRight,
-  LogOut
+  Landmark,
+  Coins
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -40,28 +41,31 @@ const Sidebar = () => {
   return (
     <aside 
       className={cn(
-        "fixed left-0 top-0 h-full bg-card border-r border-border z-40 transition-all duration-200 flex flex-col",
+        "fixed left-0 top-0 h-full bg-[#0a0a0a] border-r border-neutral-800 z-40 transition-all duration-300 flex flex-col",
         collapsed ? "w-16" : "w-56"
       )}
     >
       {/* Logo */}
-      <div className="h-14 flex items-center px-4 border-b border-border">
+      <div className="h-16 flex items-center px-4 border-b border-neutral-800">
         {collapsed ? (
-          <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center mx-auto">
-            <span className="text-xs font-bold text-accent-foreground">A</span>
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center mx-auto shadow-lg shadow-amber-500/20">
+            <Landmark className="w-5 h-5 text-black" />
           </div>
         ) : (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-md bg-accent flex items-center justify-center">
-              <span className="text-xs font-bold text-accent-foreground">CPF</span>
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/20">
+              <Landmark className="w-5 h-5 text-black" />
             </div>
-            <span className="text-sm font-semibold text-foreground">Admin Portal</span>
+            <div>
+              <span className="text-sm font-bold bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent">Admin Portal</span>
+              <p className="text-[10px] text-neutral-500">CPF Settlement</p>
+            </div>
           </div>
         )}
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
+      <nav className="flex-1 py-4 px-2 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
@@ -69,18 +73,21 @@ const Sidebar = () => {
               key={item.path}
               to={item.path}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-md transition-colors group relative",
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative",
                 isActive 
-                  ? "bg-secondary text-foreground font-medium" 
-                  : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
+                  ? "bg-gradient-to-r from-amber-500/20 to-amber-600/10 text-amber-400 border border-amber-500/20" 
+                  : "text-neutral-400 hover:text-white hover:bg-neutral-800/50"
               )}
             >
-              <item.icon className="w-[18px] h-[18px] shrink-0" />
+              <item.icon className={cn(
+                "w-[18px] h-[18px] shrink-0 transition-colors",
+                isActive ? "text-amber-400" : "text-neutral-500 group-hover:text-amber-400/70"
+              )} />
               {!collapsed && (
-                <span className="text-sm">{item.label}</span>
+                <span className="text-sm font-medium">{item.label}</span>
               )}
               {collapsed && (
-                <div className="absolute left-full ml-2 px-2 py-1 bg-foreground text-background rounded text-xs font-medium opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50">
+                <div className="absolute left-full ml-3 px-3 py-1.5 bg-neutral-800 text-white rounded-lg text-xs font-medium opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-neutral-700 shadow-xl">
                   {item.label}
                 </div>
               )}
@@ -90,25 +97,25 @@ const Sidebar = () => {
       </nav>
 
       {/* Sign Out */}
-      <div className="p-2 border-t border-border space-y-1">
+      <div className="p-3 border-t border-neutral-800">
         <button 
           onClick={handleSignOut}
-          className="flex items-center gap-3 px-3 py-2.5 rounded-md w-full text-destructive hover:bg-destructive/10 transition-colors"
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg w-full text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200"
         >
           <LogOut className="w-[18px] h-[18px] shrink-0" />
-          {!collapsed && <span className="text-sm">Sign Out</span>}
+          {!collapsed && <span className="text-sm font-medium">Sign Out</span>}
         </button>
       </div>
 
       {/* Collapse Toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute -right-3 top-16 w-6 h-6 bg-card border border-border rounded-full flex items-center justify-center shadow-sm hover:bg-secondary transition-colors"
+        className="absolute -right-3 top-20 w-6 h-6 bg-neutral-800 border border-neutral-700 rounded-full flex items-center justify-center shadow-lg hover:bg-neutral-700 hover:border-amber-500/30 transition-all duration-200"
       >
         {collapsed ? (
-          <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
+          <ChevronRight className="w-3.5 h-3.5 text-neutral-400" />
         ) : (
-          <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
+          <ChevronLeft className="w-3.5 h-3.5 text-neutral-400" />
         )}
       </button>
     </aside>

@@ -4,9 +4,8 @@ import { useAuth, AppRole } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Loader2, ArrowRight, Shield, Landmark, Users, Building2, Briefcase, ChevronRight } from 'lucide-react';
+import { Loader2, ArrowRight, Shield, Landmark, Users, Building2, Briefcase, TrendingUp, Coins, BarChart3, Wallet } from 'lucide-react';
 import { z } from 'zod';
 import { cn } from '@/lib/utils';
 
@@ -125,53 +124,63 @@ const AuthPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a]">
         <div className="flex flex-col items-center gap-4">
           <div className="relative">
-            <div className="w-12 h-12 rounded-xl bg-accent/20 flex items-center justify-center animate-pulse">
-              <Shield className="w-6 h-6 text-accent" />
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 flex items-center justify-center animate-pulse shadow-lg shadow-amber-500/20">
+              <Coins className="w-7 h-7 text-black" />
             </div>
           </div>
-          <p className="text-sm text-muted-foreground animate-pulse">Loading...</p>
+          <p className="text-sm text-neutral-400 animate-pulse">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex bg-background">
-      {/* Left Panel - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-primary relative overflow-hidden">
+    <div className="min-h-screen flex bg-[#0a0a0a]">
+      {/* Left Panel - Premium Branding */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-[#0a0a0a] via-[#111111] to-[#0a0a0a] relative overflow-hidden">
         {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-full h-full" 
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-amber-600/5 rounded-full blur-3xl"></div>
+          <div className="absolute inset-0 opacity-20" 
             style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23d4af37' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
             }}
           />
         </div>
 
+        {/* Floating Icons */}
+        <div className="absolute top-20 right-20 opacity-10">
+          <BarChart3 className="w-32 h-32 text-amber-500" />
+        </div>
+        <div className="absolute bottom-32 right-32 opacity-10">
+          <TrendingUp className="w-24 h-24 text-amber-500" />
+        </div>
+
         {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between p-12 text-primary-foreground">
+        <div className="relative z-10 flex flex-col justify-between p-12 text-white">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
-              <Landmark className="w-6 h-6 text-accent-foreground" />
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+              <Landmark className="w-7 h-7 text-black" />
             </div>
             <div>
-              <h1 className="text-xl font-bold">CPF Settlement</h1>
-              <p className="text-sm text-primary-foreground/70">Securitization Platform</p>
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent">CPF Settlement</h1>
+              <p className="text-sm text-neutral-400">Securitization Platform</p>
             </div>
           </div>
 
           {/* Main Content */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-4xl font-display leading-tight mb-4">
+              <h2 className="text-4xl font-display leading-tight mb-4 text-white">
                 Transforming Government
-                <span className="block text-accent">Payment Solutions</span>
+                <span className="block bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 bg-clip-text text-transparent">Payment Solutions</span>
               </h2>
-              <p className="text-lg text-primary-foreground/80 max-w-md">
+              <p className="text-lg text-neutral-300 max-w-md">
                 Secure, transparent, and efficient bill securitization for suppliers, MDAs, and financial institutions.
               </p>
             </div>
@@ -180,49 +189,50 @@ const AuthPage = () => {
             <div className="space-y-4">
               {[
                 { icon: Shield, text: 'Bank-grade security & encryption' },
-                { icon: Users, text: 'Multi-party verification workflow' },
+                { icon: Wallet, text: 'Blockchain-backed transactions' },
                 { icon: Building2, text: 'Direct treasury integration' },
               ].map((feature, index) => (
-                <div key={index} className="flex items-center gap-3 text-primary-foreground/90">
-                  <div className="w-10 h-10 rounded-lg bg-primary-foreground/10 flex items-center justify-center">
-                    <feature.icon className="w-5 h-5" />
+                <div key={index} className="flex items-center gap-4 text-neutral-200">
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/20 flex items-center justify-center">
+                    <feature.icon className="w-5 h-5 text-amber-400" />
                   </div>
-                  <span>{feature.text}</span>
+                  <span className="font-medium">{feature.text}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Footer */}
-          <div className="text-sm text-primary-foreground/60">
-            © 2024 CPF Settlement Platform. All rights reserved.
+          <div className="flex items-center gap-3 text-sm text-neutral-500">
+            <Coins className="w-4 h-4 text-amber-500/50" />
+            <span>© 2024 CPF Settlement Platform. All rights reserved.</span>
           </div>
         </div>
       </div>
 
       {/* Right Panel - Auth Forms */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
+      <div className="flex-1 flex items-center justify-center p-6 lg:p-12 bg-gradient-to-br from-neutral-900 to-[#0a0a0a]">
         <div className="w-full max-w-md space-y-8">
           {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center justify-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-              <Landmark className="w-6 h-6 text-primary-foreground" />
+          <div className="lg:hidden flex items-center justify-center gap-4 mb-8">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 flex items-center justify-center shadow-lg shadow-amber-500/30">
+              <Landmark className="w-7 h-7 text-black" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">CPF Settlement</h1>
-              <p className="text-sm text-muted-foreground">Securitization Platform</p>
+              <h1 className="text-xl font-bold bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent">CPF Settlement</h1>
+              <p className="text-sm text-neutral-400">Securitization Platform</p>
             </div>
           </div>
 
           {/* Tab Switcher */}
-          <div className="flex bg-secondary rounded-xl p-1">
+          <div className="flex bg-neutral-800/50 rounded-xl p-1 border border-neutral-700/50">
             <button
               onClick={() => setActiveTab('login')}
               className={cn(
                 "flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-200",
                 activeTab === 'login' 
-                  ? "bg-card text-foreground shadow-sm" 
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20" 
+                  : "text-neutral-400 hover:text-white"
               )}
             >
               Sign In
@@ -232,8 +242,8 @@ const AuthPage = () => {
               className={cn(
                 "flex-1 py-3 px-4 rounded-lg text-sm font-semibold transition-all duration-200",
                 activeTab === 'signup' 
-                  ? "bg-card text-foreground shadow-sm" 
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-lg shadow-amber-500/20" 
+                  : "text-neutral-400 hover:text-white"
               )}
             >
               Create Account
@@ -244,32 +254,32 @@ const AuthPage = () => {
           {activeTab === 'login' && (
             <form onSubmit={handleLogin} className="space-y-6 animate-fade-in">
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-foreground">Welcome back</h2>
-                <p className="text-muted-foreground">Enter your credentials to access your account</p>
+                <h2 className="text-2xl font-bold text-white">Welcome back</h2>
+                <p className="text-neutral-400">Enter your credentials to access your account</p>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="login-email" className="text-sm font-medium">Email Address</Label>
+                  <Label htmlFor="login-email" className="text-sm font-medium text-neutral-300">Email Address</Label>
                   <Input
                     id="login-email"
                     type="email"
                     placeholder="you@example.com"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
-                    className="h-12 bg-background border-border focus:border-accent focus:ring-accent"
+                    className="h-12 bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="login-password" className="text-sm font-medium">Password</Label>
+                  <Label htmlFor="login-password" className="text-sm font-medium text-neutral-300">Password</Label>
                   <Input
                     id="login-password"
                     type="password"
                     placeholder="••••••••"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    className="h-12 bg-background border-border focus:border-accent focus:ring-accent"
+                    className="h-12 bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20"
                     required
                   />
                 </div>
@@ -277,7 +287,7 @@ const AuthPage = () => {
 
               <Button 
                 type="submit" 
-                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+                className="w-full h-12 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-semibold shadow-lg shadow-amber-500/20 transition-all duration-200"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -299,49 +309,49 @@ const AuthPage = () => {
           {activeTab === 'signup' && (
             <form onSubmit={handleSignup} className="space-y-6 animate-fade-in">
               <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-foreground">Create account</h2>
-                <p className="text-muted-foreground">Get started with the CPF Settlement Platform</p>
+                <h2 className="text-2xl font-bold text-white">Create account</h2>
+                <p className="text-neutral-400">Get started with the CPF Settlement Platform</p>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name" className="text-sm font-medium">Full Name</Label>
+                  <Label htmlFor="signup-name" className="text-sm font-medium text-neutral-300">Full Name</Label>
                   <Input
                     id="signup-name"
                     type="text"
                     placeholder="John Doe"
                     value={signupFullName}
                     onChange={(e) => setSignupFullName(e.target.value)}
-                    className="h-12 bg-background border-border focus:border-accent focus:ring-accent"
+                    className="h-12 bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email" className="text-sm font-medium">Email Address</Label>
+                  <Label htmlFor="signup-email" className="text-sm font-medium text-neutral-300">Email Address</Label>
                   <Input
                     id="signup-email"
                     type="email"
                     placeholder="you@example.com"
                     value={signupEmail}
                     onChange={(e) => setSignupEmail(e.target.value)}
-                    className="h-12 bg-background border-border focus:border-accent focus:ring-accent"
+                    className="h-12 bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password" className="text-sm font-medium">Password</Label>
+                  <Label htmlFor="signup-password" className="text-sm font-medium text-neutral-300">Password</Label>
                   <Input
                     id="signup-password"
                     type="password"
                     placeholder="••••••••"
                     value={signupPassword}
                     onChange={(e) => setSignupPassword(e.target.value)}
-                    className="h-12 bg-background border-border focus:border-accent focus:ring-accent"
+                    className="h-12 bg-neutral-800/50 border-neutral-700 text-white placeholder:text-neutral-500 focus:border-amber-500 focus:ring-amber-500/20"
                     required
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-sm font-medium">Account Type</Label>
+                  <Label className="text-sm font-medium text-neutral-300">Account Type</Label>
                   <div className="grid grid-cols-2 gap-3">
                     {roleOptions.map((option) => (
                       <button
@@ -351,16 +361,16 @@ const AuthPage = () => {
                         className={cn(
                           "flex flex-col items-start p-4 rounded-xl border-2 transition-all duration-200 text-left",
                           signupRole === option.value
-                            ? "border-accent bg-accent/5"
-                            : "border-border hover:border-accent/50 hover:bg-secondary/50"
+                            ? "border-amber-500 bg-amber-500/10"
+                            : "border-neutral-700 hover:border-amber-500/50 hover:bg-neutral-800/50"
                         )}
                       >
                         <option.icon className={cn(
                           "w-5 h-5 mb-2",
-                          signupRole === option.value ? "text-accent" : "text-muted-foreground"
+                          signupRole === option.value ? "text-amber-400" : "text-neutral-400"
                         )} />
-                        <span className="font-medium text-sm text-foreground">{option.label}</span>
-                        <span className="text-xs text-muted-foreground">{option.description}</span>
+                        <span className="font-medium text-sm text-white">{option.label}</span>
+                        <span className="text-xs text-neutral-400">{option.description}</span>
                       </button>
                     ))}
                   </div>
@@ -369,7 +379,7 @@ const AuthPage = () => {
 
               <Button 
                 type="submit" 
-                className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-semibold"
+                className="w-full h-12 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-semibold shadow-lg shadow-amber-500/20 transition-all duration-200"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -388,18 +398,18 @@ const AuthPage = () => {
           )}
           
           {/* Demo Accounts */}
-          <div className="p-4 bg-secondary/50 rounded-xl border border-border">
-            <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-              <Shield className="w-4 h-4 text-accent" />
+          <div className="p-4 bg-neutral-800/30 rounded-xl border border-amber-500/20">
+            <p className="text-sm font-medium text-white mb-3 flex items-center gap-2">
+              <Shield className="w-4 h-4 text-amber-400" />
               Demo Accounts
             </p>
-            <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
-              <div>Supplier: <span className="text-foreground">supplier1@demo.com</span></div>
-              <div>SPV: <span className="text-foreground">spv1@demo.com</span></div>
-              <div>MDA: <span className="text-foreground">mda1@demo.com</span></div>
-              <div>Treasury: <span className="text-foreground">treasury1@demo.com</span></div>
+            <div className="grid grid-cols-2 gap-2 text-xs text-neutral-400">
+              <div>Supplier: <span className="text-amber-200">supplier1@demo.com</span></div>
+              <div>SPV: <span className="text-amber-200">spv1@demo.com</span></div>
+              <div>MDA: <span className="text-amber-200">mda1@demo.com</span></div>
+              <div>Treasury: <span className="text-amber-200">treasury1@demo.com</span></div>
             </div>
-            <p className="text-xs text-accent font-medium mt-2">Password: demo1234</p>
+            <p className="text-xs text-amber-400 font-medium mt-2">Password: demo1234</p>
           </div>
         </div>
       </div>
