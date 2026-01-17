@@ -205,7 +205,7 @@ const AuthPage = () => {
           {/* Footer */}
           <div className="flex items-center gap-3 text-sm text-neutral-500">
             <Coins className="w-4 h-4 text-amber-500/50" />
-            <span>© 2024 CPF Settlement Platform. All rights reserved.</span>
+            <span>© 2026 CPF Settlement Platform. All rights reserved.</span>
           </div>
         </div>
       </div>
