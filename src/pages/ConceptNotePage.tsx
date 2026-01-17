@@ -27,180 +27,496 @@ const ConceptNotePage = () => {
   const [activeSection, setActiveSection] = useState<string | null>(null);
 
   const handleDownload = () => {
-    // Create the PDF content (in production, this would be a real PDF)
-    const content = `
-CONTRACTOR PAYMENT FACILITY (CPF)
-Government Debt Securitization Platform
-Concept Note – January 2026
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>CPF Concept Note 2026</title>
+        <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+          
+          * { margin: 0; padding: 0; box-sizing: border-box; }
+          
+          body { 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            color: #1a1a1a; 
+            line-height: 1.6;
+            background: #fff;
+          }
+          
+          .page { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 60px 50px;
+          }
+          
+          /* Cover Page */
+          .cover { 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            color: white;
+            page-break-after: always;
+          }
+          
+          .cover-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(245, 158, 11, 0.3);
+          }
+          
+          .cover-logo svg { width: 40px; height: 40px; fill: #0a0a0a; }
+          
+          .cover h1 { 
+            font-size: 48px; 
+            font-weight: 800; 
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 50%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+          }
+          
+          .cover h2 { 
+            font-size: 24px; 
+            font-weight: 400; 
+            color: #a3a3a3;
+            margin-bottom: 60px;
+          }
+          
+          .cover-meta { 
+            color: #737373; 
+            font-size: 14px;
+            border-top: 1px solid #333;
+            padding-top: 40px;
+            margin-top: 40px;
+          }
+          
+          .cover-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 100px;
+            color: #f59e0b;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 40px;
+          }
+          
+          /* Content Styles */
+          h1 { font-size: 32px; font-weight: 800; margin: 48px 0 16px; color: #0a0a0a; }
+          h2 { font-size: 24px; font-weight: 700; margin: 40px 0 16px; color: #1a1a1a; border-bottom: 2px solid #f59e0b; padding-bottom: 8px; }
+          h3 { font-size: 18px; font-weight: 600; margin: 32px 0 12px; color: #262626; }
+          p { margin: 16px 0; color: #404040; }
+          
+          .section { page-break-inside: avoid; margin: 32px 0; }
+          
+          /* Executive Summary Box */
+          .exec-summary {
+            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 24px 32px;
+            margin: 32px 0;
+            border-radius: 0 12px 12px 0;
+          }
+          
+          .exec-summary h3 { color: #92400e; margin-top: 0; }
+          
+          /* Stats Grid */
+          .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin: 32px 0;
+          }
+          
+          .stat-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+          }
+          
+          .stat-value { font-size: 32px; font-weight: 800; color: #f59e0b; }
+          .stat-label { font-size: 14px; color: #6b7280; margin-top: 4px; }
+          
+          /* Tables */
+          table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+          th { background: #1a1a1a; color: white; padding: 12px 16px; text-align: left; font-weight: 600; }
+          td { padding: 12px 16px; border-bottom: 1px solid #e5e7eb; }
+          tr:nth-child(even) { background: #f9fafb; }
+          
+          /* Lists */
+          ul { margin: 16px 0; padding-left: 24px; }
+          li { margin: 8px 0; color: #404040; }
+          li::marker { color: #f59e0b; }
+          
+          /* Workflow Diagram */
+          .workflow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 32px 0;
+            padding: 24px;
+            background: #f9fafb;
+            border-radius: 12px;
+          }
+          
+          .workflow-step {
+            text-align: center;
+            flex: 1;
+          }
+          
+          .workflow-step .number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #0a0a0a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 0 auto 12px;
+          }
+          
+          .workflow-step .title { font-weight: 600; font-size: 14px; color: #1a1a1a; }
+          .workflow-step .subtitle { font-size: 12px; color: #6b7280; }
+          
+          .workflow-arrow {
+            color: #d1d5db;
+            font-size: 24px;
+            padding: 0 8px;
+          }
+          
+          /* Roadmap */
+          .roadmap {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin: 24px 0;
+          }
+          
+          .roadmap-phase {
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+          }
+          
+          .roadmap-phase.current {
+            border-color: #f59e0b;
+            background: #fffbeb;
+          }
+          
+          .roadmap-phase .phase-num {
+            font-size: 36px;
+            font-weight: 800;
+            color: #e5e7eb;
+          }
+          
+          .roadmap-phase.current .phase-num { color: #f59e0b; }
+          
+          .roadmap-phase h4 { font-size: 16px; font-weight: 600; margin: 8px 0; }
+          .roadmap-phase ul { font-size: 13px; margin: 8px 0 0; padding-left: 20px; }
+          
+          /* Footer */
+          .footer {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 2px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 12px;
+          }
+          
+          .footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+          }
+          
+          .footer-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 8px;
+          }
+          
+          /* Print Styles */
+          @media print {
+            body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .page { padding: 40px 30px; }
+            .cover { min-height: auto; padding: 100px 50px; }
+          }
+          
+          @page { margin: 0; size: A4; }
+        </style>
+      </head>
+      <body>
+        <!-- Cover Page -->
+        <div class="cover">
+          <div class="cover-logo">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <div class="cover-badge">Concept Note • January 2026</div>
+          <h1>Contractor Payment Facility</h1>
+          <h2>Government Debt Securitization Platform</h2>
+          <div class="cover-meta">
+            <p><strong>CPF Settlement Platform</strong></p>
+            <p>Confidential Document • For Authorized Recipients Only</p>
+          </div>
+        </div>
 
-EXECUTIVE SUMMARY
+        <!-- Content -->
+        <div class="page">
+          <div class="exec-summary">
+            <h3>Executive Summary</h3>
+            <p>The <strong>Contractor Payment Facility (CPF)</strong> is a revolutionary financial infrastructure designed to solve the persistent challenge of delayed government payments to contractors and suppliers.</p>
+            <p>By creating a digital marketplace that converts government receivables into tradeable, blockchain-secured instruments, CPF unlocks billions in working capital while providing institutional investors with sovereign-grade investment opportunities.</p>
+          </div>
 
-The Contractor Payment Facility (CPF) is a revolutionary financial infrastructure 
-designed to solve the persistent challenge of delayed government payments to 
-contractors and suppliers. By creating a digital marketplace that converts 
-government receivables into tradeable, blockchain-secured instruments, CPF 
-unlocks billions in working capital while providing institutional investors 
-with sovereign-grade investment opportunities.
+          <div class="stats-grid">
+            <div class="stat-box">
+              <div class="stat-value">₦5-8T</div>
+              <div class="stat-label">Nigerian Contractor Debt</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value">6-18</div>
+              <div class="stat-label">Months Payment Delay</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value">₦18T+</div>
+              <div class="stat-label">Pension Fund AUM</div>
+            </div>
+            <div class="stat-box">
+              <div class="stat-value">92%</div>
+              <div class="stat-label">Typical Advance Rate</div>
+            </div>
+          </div>
 
-Core Value Proposition:
-• For Suppliers: Immediate liquidity instead of waiting 6-18 months for government payment
-• For Governments: Reduced fiscal pressure and improved contractor relationships  
-• For Investors: Access to high-quality, government-backed receivables with predictable returns
+          <h2>The Problem</h2>
+          <div class="section">
+            <h3>Government Payment Delays: A $2 Trillion Global Challenge</h3>
+            <p>Governments worldwide owe trillions to contractors, with payment cycles often extending 6-18 months. This creates:</p>
+            <ul>
+              <li><strong>Supplier Cash Flow Crisis:</strong> SMEs face bankruptcy, contractors abandon projects</li>
+              <li><strong>Economic Inefficiency:</strong> Working capital trapped, higher bid prices</li>
+              <li><strong>Fiscal Pressure:</strong> Accumulating arrears, damaged government credibility</li>
+            </ul>
+            
+            <h3>Current Solutions Are Inadequate</h3>
+            <table>
+              <tr><th>Approach</th><th>Limitation</th></tr>
+              <tr><td>Bank Factoring</td><td>High discount rates (15-30%), limited availability</td></tr>
+              <tr><td>Government Bonds</td><td>Doesn't address supplier liquidity</td></tr>
+              <tr><td>Direct Payment</td><td>Fiscally impossible in constrained environments</td></tr>
+              <tr><td>Traditional Securitization</td><td>Complex, expensive, lacks transparency</td></tr>
+            </table>
+          </div>
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          <h2>The CPF Solution</h2>
+          <div class="section">
+            <h3>A Four-Pillar Digital Ecosystem</h3>
+            <p>CPF creates a transparent, efficient marketplace connecting all stakeholders through specialized digital portals:</p>
+            
+            <table>
+              <tr><th>Stakeholder</th><th>Role</th><th>Benefit</th></tr>
+              <tr><td><strong>Suppliers</strong></td><td>Submit verified invoices</td><td>Immediate liquidity (days, not months)</td></tr>
+              <tr><td><strong>SPV</strong></td><td>Due diligence & purchase</td><td>Sovereign-grade investment returns</td></tr>
+              <tr><td><strong>MDA</strong></td><td>Verify & authorize claims</td><td>Improved contractor relationships</td></tr>
+              <tr><td><strong>Treasury</strong></td><td>Certify & guarantee</td><td>Reduced fiscal pressure</td></tr>
+            </table>
+          </div>
 
-THE PROBLEM
+          <h2>Transaction Lifecycle</h2>
+          <div class="section">
+            <div class="workflow">
+              <div class="workflow-step">
+                <div class="number">1</div>
+                <div class="title">Supplier</div>
+                <div class="subtitle">Bill Submission</div>
+              </div>
+              <div class="workflow-arrow">→</div>
+              <div class="workflow-step">
+                <div class="number">2</div>
+                <div class="title">SPV</div>
+                <div class="subtitle">Due Diligence</div>
+              </div>
+              <div class="workflow-arrow">→</div>
+              <div class="workflow-step">
+                <div class="number">3</div>
+                <div class="title">MDA</div>
+                <div class="subtitle">Verification</div>
+              </div>
+              <div class="workflow-arrow">→</div>
+              <div class="workflow-step">
+                <div class="number">4</div>
+                <div class="title">Treasury</div>
+                <div class="subtitle">Certification</div>
+              </div>
+              <div class="workflow-arrow">→</div>
+              <div class="workflow-step">
+                <div class="number">5</div>
+                <div class="title">Blockchain</div>
+                <div class="subtitle">Settlement</div>
+              </div>
+            </div>
+          </div>
 
-Government Payment Delays: A $2 Trillion Global Challenge
+          <h2>Financial Model</h2>
+          <div class="section">
+            <h3>Discount Rate Structure</h3>
+            <table>
+              <tr><th>Risk Profile</th><th>Discount Rate</th><th>Effective Yield</th></tr>
+              <tr><td>AAA (Treasury Certified)</td><td>5-8%</td><td>6-10% annualized</td></tr>
+              <tr><td>AA (MDA Approved)</td><td>8-12%</td><td>10-15% annualized</td></tr>
+              <tr><td>A (Under Review)</td><td>12-18%</td><td>15-22% annualized</td></tr>
+            </table>
 
-Governments worldwide owe trillions to contractors, with payment cycles often 
-extending 6-18 months. This creates:
+            <h3>Example Transaction</h3>
+            <table>
+              <tr><th>Component</th><th>Value</th></tr>
+              <tr><td>Invoice Amount</td><td>₦100,000,000</td></tr>
+              <tr><td>Discount Rate</td><td>8%</td></tr>
+              <tr><td>SPV Purchase Price</td><td>₦92,000,000</td></tr>
+              <tr><td>Supplier Receives (Immediate)</td><td>₦92,000,000</td></tr>
+              <tr><td>SPV Receives at Maturity</td><td>₦100,000,000</td></tr>
+              <tr><td>SPV Profit</td><td>₦8,000,000</td></tr>
+            </table>
+          </div>
 
-1. Supplier Cash Flow Crisis
-   - Small and medium enterprises (SMEs) face bankruptcy
-   - Contractors abandon government projects
-   - Critical infrastructure suffers delays
+          <h2>Market Opportunity</h2>
+          <div class="section">
+            <h3>Nigeria Focus</h3>
+            <ul>
+              <li><strong>Government Contractor Debt:</strong> Estimated ₦5-8 trillion</li>
+              <li><strong>Annual Government Procurement:</strong> ₦3+ trillion</li>
+              <li><strong>Pension Fund AUM:</strong> ₦18+ trillion (seeking quality investments)</li>
+              <li><strong>SME Supplier Base:</strong> 40+ million (majority government contractors)</li>
+            </ul>
 
-2. Economic Inefficiency
-   - Working capital trapped in receivables
-   - Higher bid prices to compensate for payment delays
-   - Reduced competition for government contracts
+            <h3>Ghana Expansion</h3>
+            <ul>
+              <li><strong>Government Contractor Arrears:</strong> GH₢15-20 billion</li>
+              <li><strong>Growing Pension Industry:</strong> GH₢50+ billion AUM</li>
+              <li><strong>Strong Regulatory Framework:</strong> Bank of Ghana oversight</li>
+            </ul>
+          </div>
 
-3. Fiscal Pressure
-   - Accumulating arrears create political tension
-   - Difficulty in budgetary planning
-   - Damaged government credibility
+          <h2>Implementation Roadmap</h2>
+          <div class="section">
+            <div class="roadmap">
+              <div class="roadmap-phase current">
+                <div class="phase-num">01</div>
+                <h4>Proof of Concept</h4>
+                <ul>
+                  <li>✓ Platform development complete</li>
+                  <li>✓ Demo environment operational</li>
+                  <li>✓ Stakeholder testing underway</li>
+                </ul>
+              </div>
+              <div class="roadmap-phase">
+                <div class="phase-num">02</div>
+                <h4>Pilot Program (Q2 2026)</h4>
+                <ul>
+                  <li>Select 2-3 MDAs for pilot</li>
+                  <li>Onboard 10-20 suppliers</li>
+                  <li>Process ₦1-5 billion</li>
+                </ul>
+              </div>
+              <div class="roadmap-phase">
+                <div class="phase-num">03</div>
+                <h4>National Rollout (Q4 2026)</h4>
+                <ul>
+                  <li>All federal MDAs onboarded</li>
+                  <li>Multiple SPV partnerships</li>
+                  <li>Full banking integration</li>
+                </ul>
+              </div>
+              <div class="roadmap-phase">
+                <div class="phase-num">04</div>
+                <h4>Regional Expansion (2027)</h4>
+                <ul>
+                  <li>Ghana launch</li>
+                  <li>West Africa expansion</li>
+                  <li>Multi-currency support</li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+          <h2>Competitive Advantages</h2>
+          <div class="section">
+            <table>
+              <tr><th>Advantage</th><th>Description</th></tr>
+              <tr><td>Blockchain Transparency</td><td>Every transaction is immutable and auditable, reducing fraud</td></tr>
+              <tr><td>Digital-First Approach</td><td>Paperless processing, real-time updates, mobile-friendly</td></tr>
+              <tr><td>Regulatory Compliance</td><td>Built-in KYC/AML, audit-ready documentation</td></tr>
+              <tr><td>Investor Confidence</td><td>Sovereign-backed receivables with structured payments</td></tr>
+              <tr><td>Supplier Benefits</td><td>Fast liquidity, transparent pricing, no collateral required</td></tr>
+            </table>
+          </div>
 
-THE CPF SOLUTION
+          <h2>Call to Action</h2>
+          <div class="section">
+            <h3>For Government Partners</h3>
+            <ul>
+              <li>Designate pilot MDAs</li>
+              <li>Facilitate treasury integration</li>
+              <li>Provide regulatory support</li>
+            </ul>
+            
+            <h3>For Financial Partners (SPVs)</h3>
+            <ul>
+              <li>Commit pilot capital (₦5-10 billion)</li>
+              <li>Assign dedicated team</li>
+              <li>Co-develop risk framework</li>
+            </ul>
+            
+            <h3>For Suppliers</h3>
+            <ul>
+              <li>Express interest for early access</li>
+              <li>Provide feedback on platform</li>
+              <li>Participate in pilot program</li>
+            </ul>
+          </div>
 
-A Four-Pillar Digital Ecosystem connecting all stakeholders:
-
-┌─────────────────────────────────────────────────────────────┐
-│                  CPF SETTLEMENT PLATFORM                     │
-├─────────────┬─────────────┬─────────────┬─────────────┬─────┤
-│   SUPPLIER  │     SPV     │     MDA     │  TREASURY   │ADMIN│
-│   PORTAL    │   PORTAL    │   PORTAL    │   PORTAL    │     │
-├─────────────┴─────────────┴─────────────┴─────────────┴─────┤
-│            BLOCKCHAIN SETTLEMENT LAYER (Ethereum)            │
-├─────────────────────────────────────────────────────────────┤
-│                  SECURE DATABASE (Cloud)                     │
-└─────────────────────────────────────────────────────────────┘
-
-Stakeholder Roles:
-
-• SUPPLIERS: Submit verified invoices, receive immediate liquidity
-• SPV: Conduct due diligence, make purchase offers, issue receivable notes
-• MDAs: Verify claims, confirm work completion, approve debt assignment
-• TREASURY: Final certification, set payment terms, guarantee payment
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-TRANSACTION LIFECYCLE
-
-Phase 1: Bill Submission
-   Supplier completes contract → Uploads invoice → System validates
-
-Phase 2: SPV Due Diligence & Offer
-   SPV reviews bill → Risk assessment → Makes purchase offer → Supplier accepts
-
-Phase 3: MDA Verification
-   MDA notified → Verifies work → Confirms invoice → Issues Authorization
-
-Phase 4: Treasury Certification
-   Treasury reviews → Validates budget → Sets payment schedule → Issues Certificate
-
-Phase 5: Blockchain Settlement
-   Tripartite Deed created → Sequential signing → Smart contract executed → NFT minted
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-FINANCIAL MODEL
-
-Discount Rate Structure:
-┌──────────────────────────┬───────────────┬─────────────────┐
-│ Risk Profile             │ Discount Rate │ Effective Yield │
-├──────────────────────────┼───────────────┼─────────────────┤
-│ AAA (Treasury Certified) │ 5-8%          │ 6-10% annualized│
-│ AA (MDA Approved)        │ 8-12%         │ 10-15% annualized│
-│ A (Under Review)         │ 12-18%        │ 15-22% annualized│
-└──────────────────────────┴───────────────┴─────────────────┘
-
-Example Transaction:
-• Invoice Amount: ₦100,000,000
-• Discount Rate: 8%
-• SPV Purchase Price: ₦92,000,000
-• Supplier Receives: ₦92,000,000 (immediate)
-• SPV Receives at Maturity: ₦100,000,000
-• Government Pays: ₦100,000,000 (over scheduled quarters)
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-MARKET OPPORTUNITY
-
-Nigeria Focus:
-• Government Contractor Debt: ₦5-8 trillion
-• Annual Government Procurement: ₦3+ trillion
-• Pension Fund AUM: ₦18+ trillion
-• SME Supplier Base: 40+ million
-
-Ghana Expansion:
-• Government Contractor Arrears: GH₢15-20 billion
-• Pension Industry: GH₢50+ billion AUM
-• Strong Regulatory Framework
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-IMPLEMENTATION ROADMAP
-
-Phase 1: Proof of Concept (Current)
-   ✓ Platform development complete
-   ✓ Demo environment operational
-   ✓ Stakeholder testing underway
-
-Phase 2: Pilot Program (Q2 2026)
-   • Select 2-3 MDAs for pilot
-   • Onboard 10-20 suppliers
-   • Process ₦1-5 billion in transactions
-
-Phase 3: National Rollout (Q4 2026)
-   • All federal MDAs onboarded
-   • Multiple SPV partnerships
-   • Full banking integration
-
-Phase 4: Regional Expansion (2027)
-   • Ghana launch
-   • Additional West African markets
-   • Multi-currency capability
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-COMPETITIVE ADVANTAGES
-
-1. Blockchain Transparency - Immutable, auditable transactions
-2. Digital-First Approach - Paperless, real-time, mobile-friendly
-3. Regulatory Compliance - Built-in KYC/AML, audit-ready
-4. Investor Confidence - Sovereign-backed, structured payments
-5. Supplier Benefits - Fast liquidity, transparent pricing
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-© 2026 CPF Settlement Platform. All rights reserved.
-This document is confidential and intended for authorized recipients only.
-    `.trim();
-
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'CPF_Concept_Note_2026.txt';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+          <div class="footer">
+            <div class="footer-logo">
+              <div class="footer-logo-icon"></div>
+              <strong>CPF Settlement Platform</strong>
+            </div>
+            <p>© 2026 CPF Settlement Platform. All rights reserved.</p>
+            <p>This document is confidential and intended for authorized recipients only.</p>
+            <p style="margin-top: 16px; color: #9ca3af;">Generated: ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    
+    // Small delay to ensure styles load, then trigger print
+    setTimeout(() => {
+      printWindow.print();
+    }, 500);
   };
 
   const sections = [
