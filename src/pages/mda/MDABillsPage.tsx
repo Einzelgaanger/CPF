@@ -119,6 +119,52 @@ const MDABillsPage = () => {
         bill_id: selectedBill.id,
       });
 
+      // Get the SPV from the bill and notify them
+      const { data: billWithSpv } = await supabase
+        .from('bills')
+        .select('spv_id')
+        .eq('id', selectedBill.id)
+        .single();
+
+      if (billWithSpv?.spv_id) {
+        await supabase.from('notifications').insert({
+          user_id: billWithSpv.spv_id,
+          title: 'MDA Approved Bill',
+          message: `Invoice ${selectedBill.invoice_number} has been approved by MDA. Awaiting Treasury certification.`,
+          type: 'success',
+          bill_id: selectedBill.id,
+        });
+      }
+
+      // Notify all Treasury users
+      const { data: treasuryUsers } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'treasury');
+
+      if (treasuryUsers && treasuryUsers.length > 0) {
+        const treasuryNotifications = treasuryUsers.map(t => ({
+          user_id: t.user_id,
+          title: 'Bill Pending Certification',
+          message: `Invoice ${selectedBill.invoice_number} worth ₦${Number(selectedBill.amount).toLocaleString()} requires Treasury certification.`,
+          type: 'info',
+          bill_id: selectedBill.id,
+        }));
+        await supabase.from('notifications').insert(treasuryNotifications);
+      }
+
+      // Log activity
+      await supabase.from('activity_logs').insert({
+        action: 'MDA Approved Bill',
+        user_id: user.id,
+        bill_id: selectedBill.id,
+        details: { 
+          invoice_number: selectedBill.invoice_number,
+          payment_quarters: parseInt(paymentQuarters),
+          start_quarter: startQuarter
+        }
+      });
+
       setBills(prev => prev.filter(b => b.id !== selectedBill.id));
       toast.success('Bill approved! Moving to Treasury for certification.');
       setShowApprovalModal(false);

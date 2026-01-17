@@ -53,6 +53,7 @@ const getNavItems = (role: AppRole): NavItem[] => {
         { path: '/spv', icon: LayoutDashboard, label: 'Dashboard' },
         { path: '/spv/bills', icon: FileText, label: 'Browse Bills' },
         { path: '/spv/offers', icon: Wallet, label: 'My Offers' },
+        { path: '/spv/blockchain', icon: Workflow, label: 'Blockchain Deeds' },
       ];
     case 'mda':
       return [

@@ -103,7 +103,7 @@ const TreasuryPendingPage = () => {
       await supabase.from('notifications').insert({
         user_id: selectedBill.supplier_id,
         title: 'Bill Certified by Treasury',
-        message: `Your invoice ${selectedBill.invoice_number} has been certified. Certificate: ${certificateNumber}`,
+        message: `Your invoice ${selectedBill.invoice_number} has been certified. Certificate: ${certificateNumber}. Payment will be processed according to schedule.`,
         type: 'success',
         bill_id: selectedBill.id,
       });
@@ -112,12 +112,41 @@ const TreasuryPendingPage = () => {
       if (selectedBill.spv_id) {
         await supabase.from('notifications').insert({
           user_id: selectedBill.spv_id,
-          title: 'Bill Certified',
-          message: `Invoice ${selectedBill.invoice_number} has been certified by Treasury. Certificate: ${certificateNumber}`,
+          title: 'Bill Certified - Generate Receivable Notes',
+          message: `Invoice ${selectedBill.invoice_number} has been certified by Treasury. You can now proceed to generate receivable notes on the blockchain.`,
           type: 'success',
           bill_id: selectedBill.id,
         });
       }
+
+      // Notify all Admin users
+      const { data: adminUsers } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'admin');
+
+      if (adminUsers && adminUsers.length > 0) {
+        const adminNotifications = adminUsers.map(a => ({
+          user_id: a.user_id,
+          title: 'Bill Certified',
+          message: `Invoice ${selectedBill.invoice_number} worth ₦${Number(selectedBill.amount).toLocaleString()} has been certified.`,
+          type: 'info',
+          bill_id: selectedBill.id,
+        }));
+        await supabase.from('notifications').insert(adminNotifications);
+      }
+
+      // Log activity
+      await supabase.from('activity_logs').insert({
+        action: 'Treasury Certified Bill',
+        user_id: user.id,
+        bill_id: selectedBill.id,
+        details: { 
+          invoice_number: selectedBill.invoice_number,
+          certificate_number: certificateNumber,
+          amount: Number(selectedBill.amount)
+        }
+      });
 
       setBills(prev => prev.filter(b => b.id !== selectedBill.id));
       toast.success('Bill certified successfully!');

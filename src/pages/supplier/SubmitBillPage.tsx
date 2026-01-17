@@ -111,7 +111,7 @@ const SubmitBillPage = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.from('bills').insert({
+      const { data: billData, error } = await supabase.from('bills').insert({
         supplier_id: user.id,
         mda_id: formData.mda_id,
         invoice_number: formData.invoice_number,
@@ -132,9 +132,39 @@ const SubmitBillPage = () => {
           timestamp: new Date().toISOString(),
           note: 'Bill submitted by supplier'
         }])
-      });
+      }).select().single();
 
       if (error) throw error;
+
+      // Notify all SPV users about new bill
+      const { data: spvUsers } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'spv');
+
+      if (spvUsers && spvUsers.length > 0) {
+        const notifications = spvUsers.map(spv => ({
+          user_id: spv.user_id,
+          title: 'New Bill Available',
+          message: `A new invoice ${formData.invoice_number} worth ₦${parseFloat(formData.amount).toLocaleString()} is available for offers.`,
+          type: 'info',
+          bill_id: billData.id,
+        }));
+        
+        await supabase.from('notifications').insert(notifications);
+      }
+
+      // Log activity
+      await supabase.from('activity_logs').insert({
+        action: 'Bill Submitted',
+        user_id: user.id,
+        bill_id: billData.id,
+        details: { 
+          invoice_number: formData.invoice_number, 
+          amount: parseFloat(formData.amount),
+          mda_id: formData.mda_id
+        }
+      });
 
       toast.success('Bill submitted successfully!');
       navigate('/supplier/my-bills');
