@@ -143,12 +143,26 @@ const SPVBillsPage = () => {
 
       if (error) throw error;
 
+      // Notify the supplier
       await supabase.from('notifications').insert({
         user_id: selectedBill.supplier_id,
         title: 'New Offer Received!',
-        message: `You received an offer of ₦${offerAmount.toLocaleString()} for invoice ${selectedBill.invoice_number}`,
+        message: `You received an offer of ₦${offerAmount.toLocaleString()} for invoice ${selectedBill.invoice_number}. Review and accept or reject.`,
         type: 'success',
         bill_id: selectedBill.id,
+      });
+
+      // Log activity
+      await supabase.from('activity_logs').insert({
+        action: 'SPV Made Offer',
+        user_id: user.id,
+        bill_id: selectedBill.id,
+        details: { 
+          invoice_number: selectedBill.invoice_number,
+          offer_amount: offerAmount,
+          discount_rate: discountRate,
+          original_amount: selectedBill.amount
+        }
       });
 
       setBills(prev => prev.filter(b => b.id !== selectedBill.id));

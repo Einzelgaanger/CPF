@@ -72,7 +72,7 @@ const MyBillsPage = () => {
   }, [user]);
 
   const handleAcceptOffer = async () => {
-    if (!selectedBill) return;
+    if (!selectedBill || !user) return;
 
     try {
       const { error } = await supabase
@@ -84,6 +84,59 @@ const MyBillsPage = () => {
         .eq('id', selectedBill.id);
 
       if (error) throw error;
+
+      // Get the MDA for this bill to notify MDA users
+      const { data: mdaData } = await supabase
+        .from('mdas')
+        .select('name')
+        .eq('id', selectedBill.mda_id)
+        .single();
+
+      // Find MDA users assigned to this MDA
+      const { data: mdaUsers } = await supabase
+        .from('profiles')
+        .select('user_id')
+        .eq('mda_name', mdaData?.name);
+
+      // Notify MDA users
+      if (mdaUsers && mdaUsers.length > 0) {
+        const mdaNotifications = mdaUsers.map(mdaUser => ({
+          user_id: mdaUser.user_id,
+          title: 'Bill Pending Your Approval',
+          message: `Invoice ${selectedBill.invoice_number} worth ₦${Number(selectedBill.amount).toLocaleString()} requires MDA approval.`,
+          type: 'info',
+          bill_id: selectedBill.id,
+        }));
+        await supabase.from('notifications').insert(mdaNotifications);
+      }
+
+      // Also notify SPV that their offer was accepted
+      const { data: billWithSpv } = await supabase
+        .from('bills')
+        .select('spv_id')
+        .eq('id', selectedBill.id)
+        .single();
+
+      if (billWithSpv?.spv_id) {
+        await supabase.from('notifications').insert({
+          user_id: billWithSpv.spv_id,
+          title: 'Offer Accepted!',
+          message: `Your offer on invoice ${selectedBill.invoice_number} has been accepted. Awaiting MDA approval.`,
+          type: 'success',
+          bill_id: selectedBill.id,
+        });
+      }
+
+      // Log activity
+      await supabase.from('activity_logs').insert({
+        action: 'Offer Accepted',
+        user_id: user.id,
+        bill_id: selectedBill.id,
+        details: { 
+          invoice_number: selectedBill.invoice_number,
+          offer_amount: selectedBill.offer_amount 
+        }
+      });
 
       setBills(prev => prev.map(b => 
         b.id === selectedBill.id 
