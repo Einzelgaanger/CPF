@@ -23,6 +23,7 @@ import SPVDashboard from "./pages/spv/SPVDashboard";
 import SPVBillsPage from "./pages/spv/SPVBillsPage";
 import SPVOffersPage from "./pages/spv/SPVOffersPage";
 import SPVProfilePage from "./pages/spv/SPVProfilePage";
+import SPVBlockchainPage from "./pages/spv/SPVBlockchainPage";
 
 // MDA Portal
 import MDADashboard from "./pages/mda/MDADashboard";
@@ -72,6 +73,7 @@ const App = () => (
                 <Route path="/spv" element={<ProtectedRoute allowedRoles={['spv']}><SPVDashboard /></ProtectedRoute>} />
                 <Route path="/spv/bills" element={<ProtectedRoute allowedRoles={['spv']}><SPVBillsPage /></ProtectedRoute>} />
                 <Route path="/spv/offers" element={<ProtectedRoute allowedRoles={['spv']}><SPVOffersPage /></ProtectedRoute>} />
+                <Route path="/spv/blockchain" element={<ProtectedRoute allowedRoles={['spv']}><SPVBlockchainPage /></ProtectedRoute>} />
                 <Route path="/spv/profile" element={<ProtectedRoute allowedRoles={['spv']}><SPVProfilePage /></ProtectedRoute>} />
 
                 {/* MDA Portal */}

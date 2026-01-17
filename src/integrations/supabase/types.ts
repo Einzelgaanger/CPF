@@ -177,6 +177,107 @@ export type Database = {
           },
         ]
       }
+      blockchain_deeds: {
+        Row: {
+          assignor_id: string
+          assignor_signature: string | null
+          assignor_signed_at: string | null
+          assignor_wallet_address: string | null
+          bill_id: string
+          block_number: number | null
+          blockchain_tx_hash: string | null
+          contract_address: string | null
+          created_at: string
+          deed_hash: string
+          discount_rate: number | null
+          document_content: Json | null
+          executed_at: string | null
+          gas_used: number | null
+          id: string
+          network: string
+          principal_amount: number
+          procuring_entity_id: string
+          procuring_entity_signature: string | null
+          procuring_entity_signed_at: string | null
+          procuring_entity_wallet_address: string | null
+          purchase_price: number | null
+          servicing_agent_id: string | null
+          servicing_agent_signature: string | null
+          servicing_agent_signed_at: string | null
+          servicing_agent_wallet_address: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          assignor_id: string
+          assignor_signature?: string | null
+          assignor_signed_at?: string | null
+          assignor_wallet_address?: string | null
+          bill_id: string
+          block_number?: number | null
+          blockchain_tx_hash?: string | null
+          contract_address?: string | null
+          created_at?: string
+          deed_hash: string
+          discount_rate?: number | null
+          document_content?: Json | null
+          executed_at?: string | null
+          gas_used?: number | null
+          id?: string
+          network?: string
+          principal_amount: number
+          procuring_entity_id: string
+          procuring_entity_signature?: string | null
+          procuring_entity_signed_at?: string | null
+          procuring_entity_wallet_address?: string | null
+          purchase_price?: number | null
+          servicing_agent_id?: string | null
+          servicing_agent_signature?: string | null
+          servicing_agent_signed_at?: string | null
+          servicing_agent_wallet_address?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          assignor_id?: string
+          assignor_signature?: string | null
+          assignor_signed_at?: string | null
+          assignor_wallet_address?: string | null
+          bill_id?: string
+          block_number?: number | null
+          blockchain_tx_hash?: string | null
+          contract_address?: string | null
+          created_at?: string
+          deed_hash?: string
+          discount_rate?: number | null
+          document_content?: Json | null
+          executed_at?: string | null
+          gas_used?: number | null
+          id?: string
+          network?: string
+          principal_amount?: number
+          procuring_entity_id?: string
+          procuring_entity_signature?: string | null
+          procuring_entity_signed_at?: string | null
+          procuring_entity_wallet_address?: string | null
+          purchase_price?: number | null
+          servicing_agent_id?: string | null
+          servicing_agent_signature?: string | null
+          servicing_agent_signed_at?: string | null
+          servicing_agent_wallet_address?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blockchain_deeds_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mdas: {
         Row: {
           address: string | null
@@ -325,6 +426,84 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      receivable_notes: {
+        Row: {
+          bill_id: string
+          created_at: string
+          deed_id: string
+          face_value: number
+          id: string
+          issue_date: string
+          issuer_id: string
+          issuer_wallet_address: string | null
+          maturity_date: string | null
+          metadata: Json | null
+          mint_tx_hash: string | null
+          network: string
+          note_number: string
+          status: string
+          token_contract_address: string | null
+          token_id: string | null
+          token_uri: string | null
+          updated_at: string
+        }
+        Insert: {
+          bill_id: string
+          created_at?: string
+          deed_id: string
+          face_value: number
+          id?: string
+          issue_date?: string
+          issuer_id: string
+          issuer_wallet_address?: string | null
+          maturity_date?: string | null
+          metadata?: Json | null
+          mint_tx_hash?: string | null
+          network?: string
+          note_number: string
+          status?: string
+          token_contract_address?: string | null
+          token_id?: string | null
+          token_uri?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bill_id?: string
+          created_at?: string
+          deed_id?: string
+          face_value?: number
+          id?: string
+          issue_date?: string
+          issuer_id?: string
+          issuer_wallet_address?: string | null
+          maturity_date?: string | null
+          metadata?: Json | null
+          mint_tx_hash?: string | null
+          network?: string
+          note_number?: string
+          status?: string
+          token_contract_address?: string | null
+          token_id?: string | null
+          token_uri?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "receivable_notes_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "receivable_notes_deed_id_fkey"
+            columns: ["deed_id"]
+            isOneToOne: false
+            referencedRelation: "blockchain_deeds"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
