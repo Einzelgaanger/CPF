@@ -46,21 +46,22 @@ const getNavItems = (role: AppRole): NavItem[] => {
     case 'supplier':
       return [
         { path: '/supplier', icon: LayoutDashboard, label: 'Dashboard' },
-        { path: '/supplier/submit-bill', icon: Upload, label: 'Submit Bill' },
-        { path: '/supplier/my-bills', icon: FileText, label: 'My Bills' },
+        { path: '/supplier/submit-bill', icon: Upload, label: 'Submit Payable' },
+        { path: '/supplier/my-bills', icon: FileText, label: 'Receivables' },
       ];
     case 'spv':
       return [
         { path: '/spv', icon: LayoutDashboard, label: 'Dashboard' },
-        { path: '/spv/bills', icon: FileText, label: 'Browse Bills' },
+        { path: '/spv/bills', icon: FileText, label: 'Browse Payables' },
         { path: '/spv/offers', icon: Wallet, label: 'My Offers' },
         { path: '/spv/blockchain', icon: Workflow, label: 'Blockchain Deeds' },
       ];
     case 'mda':
       return [
         { path: '/mda', icon: LayoutDashboard, label: 'Dashboard' },
-        { path: '/mda/bills', icon: FileText, label: 'Pending Bills' },
-        { path: '/mda/approved', icon: FileCheck, label: 'Approved Bills' },
+        { path: '/mda/bills', icon: FileText, label: 'Financial Offers' },
+        { path: '/mda/payables', icon: Coins, label: 'Payables Registry' },
+        { path: '/mda/approved', icon: FileCheck, label: 'Approved' },
       ];
     case 'treasury':
       return [

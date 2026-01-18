@@ -200,7 +200,7 @@ const SPVBillsPage = () => {
     <PortalLayout>
       <div className="p-6 space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Browse Bills</h1>
+          <h1 className="text-2xl font-bold text-foreground">Browse Payables</h1>
           <p className="text-muted-foreground">Find and make offers on supplier invoices</p>
         </div>
 
