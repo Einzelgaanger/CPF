@@ -77,11 +77,39 @@ export const mockAcceptedOffersData = Array.from({ length: 18 }, (_, i) => ({
 }));
 
 // ============ MDA PENDING BILLS (SPV Terms Awaiting Approval) ============
+// Each bill now has multiple term options set by SPV for MDA to choose from
 export const mockMDAPendingBillsData = Array.from({ length: 20 }, (_, i) => {
   const amount = randomAmount(15000000, 120000000);
   const discountRate = randomRate(4, 10);
-  const quarters = [2, 3, 4, 6][Math.floor(Math.random() * 4)];
   const startQuarters = ['Q1 2025', 'Q2 2025', 'Q3 2025', 'Q4 2025'];
+  
+  // Generate 3 different term options for MDA to choose from
+  const termOptions = [
+    {
+      id: 'option-1',
+      label: 'Standard',
+      years: 1,
+      quarters: 4,
+      coupon_rate: randomRate(10, 12),
+      start_quarter: 'Q1 2025',
+    },
+    {
+      id: 'option-2', 
+      label: 'Extended',
+      years: 2,
+      quarters: 8,
+      coupon_rate: randomRate(11, 13),
+      start_quarter: 'Q2 2025',
+    },
+    {
+      id: 'option-3',
+      label: 'Short-term',
+      years: 0.5,
+      quarters: 2,
+      coupon_rate: randomRate(8, 10),
+      start_quarter: 'Q1 2025',
+    },
+  ];
   
   return {
     id: `mpb-${i + 1}`,
@@ -91,9 +119,12 @@ export const mockMDAPendingBillsData = Array.from({ length: 20 }, (_, i) => {
     amount,
     offer_amount: Math.round(amount * (1 - discountRate / 100)),
     offer_discount_rate: discountRate,
-    payment_quarters: quarters,
-    payment_start_quarter: startQuarters[Math.floor(Math.random() * startQuarters.length)],
-    quarter_rates: Array.from({ length: quarters }, () => randomRate(8, 14)),
+    // Legacy fields for backward compatibility
+    payment_quarters: termOptions[0].quarters,
+    payment_start_quarter: termOptions[0].start_quarter,
+    quarter_rates: Array.from({ length: termOptions[0].quarters }, () => termOptions[0].coupon_rate),
+    // New: Multiple term options
+    term_options: termOptions,
     description: descriptions[i % descriptions.length],
     terms_submitted_date: subDays(new Date(), Math.floor(Math.random() * 14) + 1).toISOString(),
   };
