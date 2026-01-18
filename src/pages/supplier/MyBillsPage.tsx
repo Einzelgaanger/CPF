@@ -104,14 +104,30 @@ const MyBillsPage = () => {
         .single();
 
       // Find MDA users assigned to this MDA
-      const { data: mdaUsers } = await supabase
+      // Prefer matching by `mda_code` (we store the MDA id there), and fallback to legacy `mda_name`.
+      let mdaUsers: Array<{ user_id: string }> = [];
+
+      const { data: mdaUsersByCode } = await supabase
         .from('profiles')
         .select('user_id')
-        .eq('mda_name', mdaData?.name);
+        .eq('mda_code', selectedBill.mda_id);
+
+      if (mdaUsersByCode && mdaUsersByCode.length > 0) {
+        mdaUsers = mdaUsersByCode as Array<{ user_id: string }>;
+      } else if (mdaData?.name) {
+        const { data: mdaUsersByName } = await supabase
+          .from('profiles')
+          .select('user_id')
+          .eq('mda_name', mdaData.name);
+
+        if (mdaUsersByName && mdaUsersByName.length > 0) {
+          mdaUsers = mdaUsersByName as Array<{ user_id: string }>;
+        }
+      }
 
       // Notify MDA users
-      if (mdaUsers && mdaUsers.length > 0) {
-        const mdaNotifications = mdaUsers.map(mdaUser => ({
+      if (mdaUsers.length > 0) {
+        const mdaNotifications = mdaUsers.map((mdaUser) => ({
           user_id: mdaUser.user_id,
           title: 'Bill Pending Your Approval',
           message: `Invoice ${selectedBill.invoice_number} worth ₦${Number(selectedBill.amount).toLocaleString()} has been accepted by supplier and requires MDA approval.`,
