@@ -55,13 +55,13 @@ const SPVOffersPage = () => {
   }, [user]);
 
   const getStatusBadge = (status: string) => {
-    const config: Record<string, { class: string; icon: React.ReactNode }> = {
-      offer_made: { class: 'bg-yellow-100 text-yellow-700', icon: <Clock className="w-3 h-3" /> },
-      offer_accepted: { class: 'bg-green-100 text-green-700', icon: <CheckCircle className="w-3 h-3" /> },
+    const config: Record<string, { class: string; icon: React.ReactNode; label?: string }> = {
+      offer_made: { class: 'bg-yellow-100 text-yellow-700', icon: <Clock className="w-3 h-3" />, label: 'Awaiting Response' },
+      offer_accepted: { class: 'bg-green-100 text-green-700', icon: <CheckCircle className="w-3 h-3" />, label: 'Offer Accepted' },
       mda_reviewing: { class: 'bg-orange-100 text-orange-700', icon: <Clock className="w-3 h-3" /> },
       mda_approved: { class: 'bg-green-100 text-green-700', icon: <CheckCircle className="w-3 h-3" /> },
       certified: { class: 'bg-emerald-100 text-emerald-700', icon: <CheckCircle className="w-3 h-3" /> },
-      rejected: { class: 'bg-red-100 text-red-700', icon: <XCircle className="w-3 h-3" /> },
+      rejected: { class: 'bg-red-100 text-red-700', icon: <XCircle className="w-3 h-3" />, label: 'Rejected by Supplier' },
     };
     return config[status] || { class: 'bg-gray-100 text-gray-700', icon: null };
   };
@@ -69,6 +69,7 @@ const SPVOffersPage = () => {
   const pendingOffers = offers.filter(o => o.status === 'offer_made');
   const acceptedOffers = offers.filter(o => ['offer_accepted', 'mda_reviewing', 'mda_approved', 'terms_set', 'agreement_sent', 'treasury_reviewing'].includes(o.status));
   const completedOffers = offers.filter(o => o.status === 'certified');
+  const rejectedOffers = offers.filter(o => o.status === 'rejected');
 
   return (
     <PortalLayout>
@@ -79,7 +80,7 @@ const SPVOffersPage = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-yellow-50 border-yellow-200">
             <CardContent className="py-4">
               <p className="text-sm text-yellow-600">Pending Response</p>
@@ -96,6 +97,12 @@ const SPVOffersPage = () => {
             <CardContent className="py-4">
               <p className="text-sm text-green-600">Completed</p>
               <p className="text-2xl font-bold text-green-700">{completedOffers.length}</p>
+            </CardContent>
+          </Card>
+          <Card className="bg-red-50 border-red-200">
+            <CardContent className="py-4">
+              <p className="text-sm text-red-600">Rejected</p>
+              <p className="text-2xl font-bold text-red-700">{rejectedOffers.length}</p>
             </CardContent>
           </Card>
         </div>
@@ -139,7 +146,7 @@ const SPVOffersPage = () => {
                         <p className="font-bold text-lg">₦{Number(offer.offer_amount || offer.amount).toLocaleString()}</p>
                         <Badge className={`${statusConfig.class} flex items-center gap-1 mt-1`}>
                           {statusConfig.icon}
-                          {offer.status.replace(/_/g, ' ')}
+                          {statusConfig.label || offer.status.replace(/_/g, ' ')}
                         </Badge>
                       </div>
                     </div>
