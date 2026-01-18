@@ -5,11 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { FileText, Search, Filter, ExternalLink, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
+import { FileText, Search, Filter, ExternalLink, CheckCircle, XCircle, Clock, Eye, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Bill {
@@ -28,6 +30,7 @@ interface Bill {
   certificate_number: string | null;
   created_at: string;
   mda_id: string;
+  spv_id: string | null;
 }
 
 interface MDA {
@@ -45,6 +48,18 @@ const MyBillsPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const fetchBills = async () => {
+    const { data: billsData } = await supabase
+      .from('bills')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (billsData) setBills(billsData as Bill[]);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,13 +73,7 @@ const MyBillsPage = () => {
         setMdas(mdaMap);
       }
 
-      // Fetch bills
-      const { data: billsData } = await supabase
-        .from('bills')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (billsData) setBills(billsData as Bill[]);
+      await fetchBills();
       setLoading(false);
     };
 
@@ -74,6 +83,7 @@ const MyBillsPage = () => {
   const handleAcceptOffer = async () => {
     if (!selectedBill || !user) return;
 
+    setSubmitting(true);
     try {
       // Update status to offer_accepted (MDA will see it)
       const { error } = await supabase
@@ -111,16 +121,10 @@ const MyBillsPage = () => {
         await supabase.from('notifications').insert(mdaNotifications);
       }
 
-      // Also notify SPV that their offer was accepted
-      const { data: billWithSpv } = await supabase
-        .from('bills')
-        .select('spv_id')
-        .eq('id', selectedBill.id)
-        .single();
-
-      if (billWithSpv?.spv_id) {
+      // Notify SPV that their offer was accepted
+      if (selectedBill.spv_id) {
         await supabase.from('notifications').insert({
-          user_id: billWithSpv.spv_id,
+          user_id: selectedBill.spv_id,
           title: 'Offer Accepted!',
           message: `Your offer on invoice ${selectedBill.invoice_number} has been accepted by the supplier. Awaiting MDA approval.`,
           type: 'success',
@@ -140,13 +144,8 @@ const MyBillsPage = () => {
         }
       });
 
-      // Refetch bills to update UI with database state
-      const { data: updatedBills } = await supabase
-        .from('bills')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (updatedBills) setBills(updatedBills as Bill[]);
+      // Refetch bills to update UI
+      await fetchBills();
 
       toast.success('Offer accepted! The bill has been sent to MDA for approval.');
       setShowOfferModal(false);
@@ -154,13 +153,21 @@ const MyBillsPage = () => {
     } catch (error) {
       console.error('Error accepting offer:', error);
       toast.error('Failed to accept offer');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleRejectOffer = async () => {
-    if (!selectedBill) return;
+    if (!selectedBill || !user || !rejectReason.trim()) {
+      toast.error('Please provide a reason for rejection');
+      return;
+    }
 
+    setSubmitting(true);
     try {
+      const spvId = selectedBill.spv_id;
+
       const { error } = await supabase
         .from('bills')
         .update({
@@ -174,18 +181,42 @@ const MyBillsPage = () => {
 
       if (error) throw error;
 
-      setBills(prev => prev.map(b => 
-        b.id === selectedBill.id 
-          ? { ...b, status: 'submitted', offer_amount: null }
-          : b
-      ));
+      // Notify SPV of rejection with reason
+      if (spvId) {
+        await supabase.from('notifications').insert({
+          user_id: spvId,
+          title: 'Offer Rejected',
+          message: `Your offer on invoice ${selectedBill.invoice_number} was rejected. Reason: ${rejectReason}`,
+          type: 'error',
+          bill_id: selectedBill.id,
+        });
+      }
 
-      toast.success('Offer rejected. Your bill is back in the pool.');
+      // Log activity
+      await supabase.from('activity_logs').insert({
+        action: 'Supplier Rejected Offer',
+        user_id: user.id,
+        bill_id: selectedBill.id,
+        details: { 
+          invoice_number: selectedBill.invoice_number,
+          rejected_offer_amount: selectedBill.offer_amount,
+          rejection_reason: rejectReason
+        }
+      });
+
+      // Refetch bills
+      await fetchBills();
+
+      toast.success('Offer rejected. The SPV has been notified.');
+      setShowRejectModal(false);
       setShowOfferModal(false);
       setSelectedBill(null);
+      setRejectReason('');
     } catch (error) {
       console.error('Error rejecting offer:', error);
       toast.error('Failed to reject offer');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -383,13 +414,65 @@ const MyBillsPage = () => {
             )}
 
             <DialogFooter className="gap-2">
-              <Button variant="outline" onClick={handleRejectOffer}>
+              <Button 
+                variant="outline" 
+                onClick={() => { setShowOfferModal(false); setShowRejectModal(true); }}
+                disabled={submitting}
+              >
                 <XCircle className="w-4 h-4 mr-2" />
                 Reject Offer
               </Button>
-              <Button onClick={handleAcceptOffer}>
+              <Button onClick={handleAcceptOffer} disabled={submitting}>
                 <CheckCircle className="w-4 h-4 mr-2" />
-                Accept Offer
+                {submitting ? 'Processing...' : 'Accept Offer'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Rejection Modal */}
+        <Dialog open={showRejectModal} onOpenChange={setShowRejectModal}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-destructive" />
+                Reject Offer
+              </DialogTitle>
+              <DialogDescription>
+                Please provide a reason for rejecting this offer. The SPV will be notified and can revise their offer.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              {selectedBill && (
+                <div className="p-3 bg-secondary rounded-lg text-sm">
+                  <p><span className="text-muted-foreground">Invoice:</span> {selectedBill.invoice_number}</p>
+                  <p><span className="text-muted-foreground">Offer:</span> ₦{Number(selectedBill.offer_amount).toLocaleString()}</p>
+                </div>
+              )}
+              
+              <div className="space-y-2">
+                <Label htmlFor="reject-reason">Rejection Reason *</Label>
+                <Textarea
+                  id="reject-reason"
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  placeholder="e.g., Discount rate too high, need at least 95% of face value..."
+                  rows={4}
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => { setShowRejectModal(false); setRejectReason(''); }}>
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={handleRejectOffer}
+                disabled={submitting || !rejectReason.trim()}
+              >
+                {submitting ? 'Rejecting...' : 'Confirm Rejection'}
               </Button>
             </DialogFooter>
           </DialogContent>
