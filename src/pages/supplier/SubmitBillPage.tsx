@@ -10,7 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { Loader2, Upload, FileText, Calendar, Building2, AlertCircle } from 'lucide-react';
+import { Loader2, Upload, FileText, Calendar, Building2, AlertCircle, Trash2, Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface MDA {
@@ -19,14 +19,21 @@ interface MDA {
   code: string;
 }
 
+interface UploadedFile {
+  id: string;
+  name: string;
+  customName: string;
+  url: string | null;
+  file: File;
+  uploading: boolean;
+}
+
 const SubmitBillPage = () => {
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const [loading, setLoading] = useState(false);
   const [mdas, setMdas] = useState<MDA[]>([]);
-  const [uploadingFile, setUploadingFile] = useState(false);
-  const [invoiceFile, setInvoiceFile] = useState<File | null>(null);
-  const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -38,6 +45,7 @@ const SubmitBillPage = () => {
     currency: 'NGN',
     description: '',
     contract_reference: '',
+    ifmis_id: '',
     work_description: '',
     work_start_date: '',
     work_end_date: '',
@@ -52,41 +60,68 @@ const SubmitBillPage = () => {
     fetchMDAs();
   }, []);
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || !user) return;
 
-    if (file.size > 10 * 1024 * 1024) {
-      toast.error('File size must be less than 10MB');
-      return;
+    const newFiles: UploadedFile[] = [];
+
+    for (const file of Array.from(files)) {
+      if (file.size > 10 * 1024 * 1024) {
+        toast.error(`${file.name} is too large. Max 10MB`);
+        continue;
+      }
+
+      const fileId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      newFiles.push({
+        id: fileId,
+        name: file.name,
+        customName: file.name.replace(/\.[^/.]+$/, ''), // Remove extension for custom name
+        url: null,
+        file: file,
+        uploading: true,
+      });
     }
 
-    setInvoiceFile(file);
-    setUploadingFile(true);
+    setUploadedFiles(prev => [...prev, ...newFiles]);
 
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+    // Upload files in background
+    for (const newFile of newFiles) {
+      try {
+        const fileExt = newFile.file.name.split('.').pop();
+        const fileName = `${user.id}/${Date.now()}-${newFile.id}.${fileExt}`;
 
-      const { data, error } = await supabase.storage
-        .from('invoices')
-        .upload(fileName, file);
+        const { data, error } = await supabase.storage
+          .from('invoices')
+          .upload(fileName, newFile.file);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      const { data: urlData } = supabase.storage
-        .from('invoices')
-        .getPublicUrl(data.path);
+        const { data: urlData } = supabase.storage
+          .from('invoices')
+          .getPublicUrl(data.path);
 
-      setInvoiceUrl(urlData.publicUrl);
-      toast.success('Invoice uploaded successfully');
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload invoice');
-      setInvoiceFile(null);
-    } finally {
-      setUploadingFile(false);
+        setUploadedFiles(prev => prev.map(f => 
+          f.id === newFile.id 
+            ? { ...f, url: urlData.publicUrl, uploading: false }
+            : f
+        ));
+      } catch (error) {
+        console.error('Upload error:', error);
+        toast.error(`Failed to upload ${newFile.name}`);
+        setUploadedFiles(prev => prev.filter(f => f.id !== newFile.id));
+      }
     }
+  };
+
+  const updateFileName = (id: string, customName: string) => {
+    setUploadedFiles(prev => prev.map(f => 
+      f.id === id ? { ...f, customName } : f
+    ));
+  };
+
+  const removeFile = (id: string) => {
+    setUploadedFiles(prev => prev.filter(f => f.id !== id));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -108,9 +143,25 @@ const SubmitBillPage = () => {
       return;
     }
 
+    // Check if any files are still uploading
+    if (uploadedFiles.some(f => f.uploading)) {
+      toast.error('Please wait for files to finish uploading');
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // Prepare supporting documents array
+      const supportingDocuments = uploadedFiles.map(f => ({
+        name: f.customName,
+        originalName: f.name,
+        url: f.url,
+      }));
+
+      // Get the invoice document URL (first uploaded file or null)
+      const invoiceUrl = uploadedFiles.length > 0 ? uploadedFiles[0].url : null;
+
       const { data: billData, error } = await supabase.from('bills').insert({
         supplier_id: user.id,
         mda_id: formData.mda_id,
@@ -120,12 +171,13 @@ const SubmitBillPage = () => {
         amount: parseFloat(formData.amount),
         currency: formData.currency,
         description: formData.description,
-        contract_reference: formData.contract_reference,
+        contract_reference: formData.contract_reference || formData.ifmis_id || null,
         work_description: formData.work_description,
         work_start_date: formData.work_start_date || null,
         work_end_date: formData.work_end_date || null,
         delivery_date: formData.delivery_date || null,
         invoice_document_url: invoiceUrl,
+        supporting_documents: supportingDocuments,
         status: 'submitted',
         status_history: JSON.stringify([{
           status: 'submitted',
@@ -145,7 +197,7 @@ const SubmitBillPage = () => {
       if (spvUsers && spvUsers.length > 0) {
         const notifications = spvUsers.map(spv => ({
           user_id: spv.user_id,
-          title: 'New Bill Available',
+          title: 'New Payable Available',
           message: `A new invoice ${formData.invoice_number} worth ₦${parseFloat(formData.amount).toLocaleString()} is available for offers.`,
           type: 'info',
           bill_id: billData.id,
@@ -162,15 +214,16 @@ const SubmitBillPage = () => {
         details: { 
           invoice_number: formData.invoice_number, 
           amount: parseFloat(formData.amount),
-          mda_id: formData.mda_id
+          mda_id: formData.mda_id,
+          documents_count: uploadedFiles.length
         }
       });
 
-      toast.success('Bill submitted successfully!');
+      toast.success('Payable submitted successfully!');
       navigate('/supplier/my-bills');
     } catch (error) {
       console.error('Submit error:', error);
-      toast.error('Failed to submit bill');
+      toast.error('Failed to submit payable');
     } finally {
       setLoading(false);
     }
@@ -184,7 +237,7 @@ const SubmitBillPage = () => {
     <PortalLayout>
       <div className="p-6 max-w-4xl mx-auto">
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-foreground">Submit New Bill</h1>
+          <h1 className="text-2xl font-bold text-foreground">Submit New Payable</h1>
           <p className="text-muted-foreground">Fill in the invoice details to submit for payment</p>
         </div>
 
@@ -299,23 +352,35 @@ const SubmitBillPage = () => {
             </CardContent>
           </Card>
 
-          {/* Work/Contract Details */}
+          {/* Contract/IFMIS Details */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="w-5 h-5" />
-                Work/Contract Details
+                Contract / IFMIS Reference
               </CardTitle>
+              <CardDescription>Enter the contract reference or IFMIS ID for tracking</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="contract_reference">Contract Reference Number</Label>
-                <Input
-                  id="contract_reference"
-                  value={formData.contract_reference}
-                  onChange={(e) => updateField('contract_reference', e.target.value)}
-                  placeholder="e.g., CTR-2024-001"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="contract_reference">Contract Reference Number</Label>
+                  <Input
+                    id="contract_reference"
+                    value={formData.contract_reference}
+                    onChange={(e) => updateField('contract_reference', e.target.value)}
+                    placeholder="e.g., CTR-2024-001"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="ifmis_id">IFMIS ID</Label>
+                  <Input
+                    id="ifmis_id"
+                    value={formData.ifmis_id}
+                    onChange={(e) => updateField('ifmis_id', e.target.value)}
+                    placeholder="e.g., IFMIS-2024-00123"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
@@ -361,45 +426,74 @@ const SubmitBillPage = () => {
             </CardContent>
           </Card>
 
-          {/* Invoice Document Upload */}
+          {/* Document Upload */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Upload className="w-5 h-5" />
-                Upload Invoice Document
+                Upload Documents
               </CardTitle>
-              <CardDescription>Upload a PDF copy of your invoice</CardDescription>
+              <CardDescription>
+                Upload your invoice, signed delivery notes, and other supporting documents. 
+                Give each document a descriptive name.
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
-                {invoiceFile ? (
-                  <div className="flex items-center justify-center gap-3">
-                    <FileText className="w-8 h-8 text-accent" />
-                    <div className="text-left">
-                      <p className="font-medium">{invoiceFile.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {(invoiceFile.size / 1024 / 1024).toFixed(2)} MB
-                      </p>
+            <CardContent className="space-y-4">
+              {/* Uploaded Files List */}
+              {uploadedFiles.length > 0 && (
+                <div className="space-y-3">
+                  {uploadedFiles.map((file) => (
+                    <div key={file.id} className="flex items-center gap-3 p-3 bg-secondary/50 rounded-lg border">
+                      <FileText className="w-8 h-8 text-accent shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <Input
+                          value={file.customName}
+                          onChange={(e) => updateFileName(file.id, e.target.value)}
+                          placeholder="Document name..."
+                          className="h-8 text-sm"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1 truncate">
+                          Original: {file.name} ({(file.file.size / 1024 / 1024).toFixed(2)} MB)
+                        </p>
+                      </div>
+                      {file.uploading ? (
+                        <Loader2 className="w-5 h-5 animate-spin text-accent shrink-0" />
+                      ) : (
+                        <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="icon"
+                          onClick={() => removeFile(file.id)}
+                          className="shrink-0 text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
                     </div>
-                    {uploadingFile && <Loader2 className="w-5 h-5 animate-spin text-accent" />}
-                  </div>
-                ) : (
-                  <label className="cursor-pointer">
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept=".pdf,.png,.jpg,.jpeg"
-                      onChange={handleFileUpload}
-                    />
-                    <Upload className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
+                  ))}
+                </div>
+              )}
+
+              {/* Upload Area */}
+              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
+                <label className="cursor-pointer">
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                    onChange={handleFileSelect}
+                    multiple
+                  />
+                  <div className="flex flex-col items-center">
+                    <Plus className="w-10 h-10 text-muted-foreground mb-3" />
                     <p className="text-sm text-muted-foreground">
-                      Click to upload or drag and drop
+                      Click to add documents
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      PDF, PNG, JPG up to 10MB
+                      Invoice, Signed Delivery Notes, Contracts, etc. (PDF, PNG, JPG, DOC up to 10MB each)
                     </p>
-                  </label>
-                )}
+                  </div>
+                </label>
               </div>
             </CardContent>
           </Card>
@@ -409,7 +503,7 @@ const SubmitBillPage = () => {
             <Button type="button" variant="outline" onClick={() => navigate('/supplier')}>
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || uploadingFile || !profile?.profile_completed}>
+            <Button type="submit" disabled={loading || uploadedFiles.some(f => f.uploading) || !profile?.profile_completed}>
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -418,7 +512,7 @@ const SubmitBillPage = () => {
               ) : (
                 <>
                   <Upload className="w-4 h-4 mr-2" />
-                  Submit Bill
+                  Submit Payable
                 </>
               )}
             </Button>

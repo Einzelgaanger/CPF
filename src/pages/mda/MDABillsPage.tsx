@@ -223,8 +223,8 @@ const MDABillsPage = () => {
     <PortalLayout>
       <div className="p-6 space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Pending Bills</h1>
-          <p className="text-muted-foreground">Review and approve supplier invoices</p>
+          <h1 className="text-2xl font-bold text-foreground">Financial Offers</h1>
+          <p className="text-muted-foreground">Review SPV offers and approve supplier invoices</p>
         </div>
 
         {/* Bills List */}

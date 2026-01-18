@@ -6,11 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { FileText, Shield, ExternalLink, Building2, Calendar, Wallet, Link } from 'lucide-react';
-import { format } from 'date-fns';
+import { FileText, Shield, ExternalLink, Building2, Calendar, Wallet, Edit, Eye, CheckCircle, Clock } from 'lucide-react';
+import { format, subDays, subMonths } from 'date-fns';
 import { useBlockchainDeed } from '@/hooks/useBlockchainDeed';
 
 interface Bill {
@@ -21,6 +24,7 @@ interface Bill {
   invoice_date: string;
   amount: number;
   offer_amount: number | null;
+  offer_discount_rate: number | null;
   description: string | null;
   status: string;
   invoice_document_url: string | null;
@@ -36,6 +40,49 @@ interface MDA {
   name: string;
 }
 
+// Mock data for treasury overview
+const mockPendingBills = [
+  {
+    id: 'm1',
+    invoice_number: 'INV-2024-M001',
+    supplier_name: 'National Builders Ltd',
+    mda_name: 'Ministry of Works',
+    amount: 85000000,
+    offer_amount: 78200000,
+    offer_discount_rate: 8,
+    mda_approved_date: subDays(new Date(), 3).toISOString(),
+    payment_quarters: 4,
+    payment_start_quarter: 'Q2 2025',
+    description: 'Highway construction phase 2',
+  },
+  {
+    id: 'm2',
+    invoice_number: 'INV-2024-M002',
+    supplier_name: 'Tech Infrastructure Inc',
+    mda_name: 'Ministry of Communications',
+    amount: 45000000,
+    offer_amount: 42750000,
+    offer_discount_rate: 5,
+    mda_approved_date: subDays(new Date(), 5).toISOString(),
+    payment_quarters: 2,
+    payment_start_quarter: 'Q1 2025',
+    description: 'Data center upgrade',
+  },
+  {
+    id: 'm3',
+    invoice_number: 'INV-2024-M003',
+    supplier_name: 'Medical Supplies Corp',
+    mda_name: 'Ministry of Health',
+    amount: 120000000,
+    offer_amount: 108000000,
+    offer_discount_rate: 10,
+    mda_approved_date: subDays(new Date(), 7).toISOString(),
+    payment_quarters: 6,
+    payment_start_quarter: 'Q1 2025',
+    description: 'Hospital equipment procurement',
+  },
+];
+
 const TreasuryPendingPage = () => {
   const { user } = useAuth();
   const { createDeed, loading: blockchainLoading } = useBlockchainDeed();
@@ -43,9 +90,21 @@ const TreasuryPendingPage = () => {
   const [mdas, setMdas] = useState<Record<string, MDA>>({});
   const [loading, setLoading] = useState(true);
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+  const [selectedMockBill, setSelectedMockBill] = useState<typeof mockPendingBills[0] | null>(null);
   const [showCertifyModal, setShowCertifyModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [showAmendModal, setShowAmendModal] = useState(false);
   const [certificateNumber, setCertificateNumber] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [activeTab, setActiveTab] = useState('pending');
+
+  // Amend form state
+  const [amendData, setAmendData] = useState({
+    payment_quarters: '4',
+    payment_start_quarter: 'Q1 2025',
+    discount_rate: '5',
+    notes: '',
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -83,6 +142,36 @@ const TreasuryPendingPage = () => {
     setShowCertifyModal(true);
   };
 
+  const openDetailsModal = (bill: typeof mockPendingBills[0]) => {
+    setSelectedMockBill(bill);
+    setAmendData({
+      payment_quarters: bill.payment_quarters.toString(),
+      payment_start_quarter: bill.payment_start_quarter,
+      discount_rate: bill.offer_discount_rate.toString(),
+      notes: '',
+    });
+    setShowDetailsModal(true);
+  };
+
+  const handleAmendTerms = () => {
+    setShowDetailsModal(false);
+    setShowAmendModal(true);
+  };
+
+  const handleConfirmAmendment = async () => {
+    if (!selectedMockBill) return;
+
+    setSubmitting(true);
+
+    // Simulate amendment notification
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    toast.success(`Terms amended for ${selectedMockBill.invoice_number}. SPV, MDA, and Supplier have been notified.`);
+    setShowAmendModal(false);
+    setSelectedMockBill(null);
+    setSubmitting(false);
+  };
+
   const handleCertify = async () => {
     if (!selectedBill || !user || !certificateNumber) return;
 
@@ -110,7 +199,7 @@ const TreasuryPendingPage = () => {
 
           const deedContent = {
             billId: selectedBill.id,
-            assignorName: 'Supplier', // Would ideally fetch from profile
+            assignorName: 'Supplier',
             procuringEntityName: mdas[selectedBill.mda_id]?.name || 'Unknown MDA',
             principalAmount: Number(selectedBill.amount),
             discountRate: discountRate,
@@ -125,19 +214,18 @@ const TreasuryPendingPage = () => {
           };
 
           await createDeed(
-            selectedBill.id,              // billId
-            selectedBill.supplier_id,     // assignorId
-            selectedBill.mda_id,          // procuringEntityId
-            Number(selectedBill.amount),  // principalAmount
-            discountRate,                 // discountRate
-            Number(selectedBill.offer_amount) || Number(selectedBill.amount), // purchasePrice
-            deedContent                   // documentContent
+            selectedBill.id,
+            selectedBill.supplier_id,
+            selectedBill.mda_id,
+            Number(selectedBill.amount),
+            discountRate,
+            Number(selectedBill.offer_amount) || Number(selectedBill.amount),
+            deedContent
           );
 
           console.log('Blockchain deed created for bill:', selectedBill.invoice_number);
         } catch (deedError) {
           console.error('Error creating blockchain deed:', deedError);
-          // Don't fail the certification if deed creation fails
         }
       }
 
@@ -203,49 +291,129 @@ const TreasuryPendingPage = () => {
     }
   };
 
+  const totalPending = bills.length + mockPendingBills.length;
+  const totalValue = bills.reduce((sum, b) => sum + Number(b.amount), 0) + 
+                     mockPendingBills.reduce((sum, b) => sum + b.amount, 0);
+
   return (
     <PortalLayout>
       <div className="p-6 space-y-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Pending Certification</h1>
-          <p className="text-muted-foreground">Review MDA-approved bills and issue certificates</p>
+          <p className="text-muted-foreground">Review MDA-approved bills, view details, and issue certificates</p>
         </div>
 
         {/* Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card className="bg-orange-50 border-orange-200">
             <CardContent className="py-4">
               <p className="text-sm text-orange-600">Total Pending</p>
-              <p className="text-2xl font-bold text-orange-700">{bills.length} bills</p>
+              <p className="text-2xl font-bold text-orange-700">{totalPending} bills</p>
             </CardContent>
           </Card>
           <Card className="bg-blue-50 border-blue-200">
             <CardContent className="py-4">
               <p className="text-sm text-blue-600">Total Value</p>
               <p className="text-2xl font-bold text-blue-700">
-                ₦{(bills.reduce((sum, b) => sum + Number(b.amount), 0) / 1000000).toFixed(1)}M
+                ₦{(totalValue / 1000000).toFixed(1)}M
               </p>
+            </CardContent>
+          </Card>
+          <Card className="bg-green-50 border-green-200">
+            <CardContent className="py-4">
+              <p className="text-sm text-green-600">Ready to Certify</p>
+              <p className="text-2xl font-bold text-green-700">{totalPending}</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Bills List */}
-        <div className="space-y-4">
-          {loading ? (
-            <Card>
-              <CardContent className="py-8 text-center">
-                <p className="text-muted-foreground">Loading bills...</p>
-              </CardContent>
-            </Card>
-          ) : bills.length === 0 ? (
-            <Card>
-              <CardContent className="py-8 text-center">
-                <FileText className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
-                <p className="text-muted-foreground">No bills pending certification</p>
-              </CardContent>
-            </Card>
-          ) : (
-            bills.map((bill) => (
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="pending" className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Pending ({totalPending})
+            </TabsTrigger>
+            <TabsTrigger value="review" className="flex items-center gap-2">
+              <Eye className="w-4 h-4" />
+              Full Review
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="pending" className="space-y-4 mt-4">
+            {/* Mock Bills */}
+            {mockPendingBills.map((bill) => (
+              <Card key={bill.id}>
+                <CardContent className="py-4">
+                  <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-start gap-4">
+                        <div className="p-3 rounded-lg bg-secondary">
+                          <FileText className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-lg">{bill.invoice_number}</h3>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Building2 className="w-3 h-3" />
+                            {bill.mda_name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">{bill.supplier_name}</p>
+                          <p className="text-sm text-muted-foreground flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            MDA Approved: {format(new Date(bill.mda_approved_date), 'PPP')}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="pl-16 p-3 bg-secondary/50 rounded-lg grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Discount Rate</p>
+                          <p className="font-medium">{bill.offer_discount_rate}%</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Quarters</p>
+                          <p className="font-medium">{bill.payment_quarters}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Start Quarter</p>
+                          <p className="font-medium">{bill.payment_start_quarter}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Per Quarter</p>
+                          <p className="font-medium">₦{(bill.amount / bill.payment_quarters).toLocaleString()}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-right space-y-3">
+                      <div>
+                        <p className="text-sm text-muted-foreground">Invoice Amount</p>
+                        <p className="text-xl font-bold">₦{bill.amount.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">SPV Amount</p>
+                        <p className="text-lg font-semibold text-accent">₦{bill.offer_amount.toLocaleString()}</p>
+                      </div>
+                      <Badge className="bg-orange-100 text-orange-700">MDA Approved</Badge>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-2 mt-4 pt-4 border-t">
+                    <Button variant="outline" size="sm" onClick={() => openDetailsModal(bill)}>
+                      <Eye className="w-4 h-4 mr-2" />
+                      View & Amend
+                    </Button>
+                    <Button size="sm" onClick={() => toast.success('Certification modal would open')}>
+                      <Shield className="w-4 h-4 mr-2" />
+                      Issue Certificate
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+
+            {/* Real Bills from DB */}
+            {bills.map((bill) => (
               <Card key={bill.id}>
                 <CardContent className="py-4">
                   <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
@@ -320,9 +488,192 @@ const TreasuryPendingPage = () => {
                   </div>
                 </CardContent>
               </Card>
-            ))
-          )}
-        </div>
+            ))}
+
+            {loading && (
+              <Card>
+                <CardContent className="py-8 text-center">
+                  <p className="text-muted-foreground">Loading bills...</p>
+                </CardContent>
+              </Card>
+            )}
+
+            {!loading && bills.length === 0 && mockPendingBills.length === 0 && (
+              <Card>
+                <CardContent className="py-8 text-center">
+                  <FileText className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
+                  <p className="text-muted-foreground">No bills pending certification</p>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="review" className="mt-4">
+            <Card>
+              <CardContent className="py-8 text-center">
+                <Eye className="w-12 h-12 mx-auto text-muted-foreground/50 mb-3" />
+                <p className="text-muted-foreground">Full review panel - select a bill from the Pending tab to review details</p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
+
+        {/* View Details Modal */}
+        <Dialog open={showDetailsModal} onOpenChange={setShowDetailsModal}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Bill Details</DialogTitle>
+              <DialogDescription>
+                Review all details and terms for {selectedMockBill?.invoice_number}
+              </DialogDescription>
+            </DialogHeader>
+            
+            {selectedMockBill && (
+              <div className="space-y-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-secondary rounded-lg">
+                    <p className="text-sm text-muted-foreground">Invoice Amount</p>
+                    <p className="text-xl font-bold">₦{selectedMockBill.amount.toLocaleString()}</p>
+                  </div>
+                  <div className="p-4 bg-secondary rounded-lg">
+                    <p className="text-sm text-muted-foreground">SPV Offer</p>
+                    <p className="text-xl font-bold text-accent">₦{selectedMockBill.offer_amount.toLocaleString()}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Supplier</p>
+                    <p className="font-medium">{selectedMockBill.supplier_name}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">MDA</p>
+                    <p className="font-medium">{selectedMockBill.mda_name}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Discount Rate</p>
+                    <p className="font-medium">{selectedMockBill.offer_discount_rate}%</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Description</p>
+                    <p className="font-medium">{selectedMockBill.description}</p>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-blue-50 rounded-lg">
+                  <h4 className="font-semibold text-blue-700 mb-2">Payment Terms</h4>
+                  <div className="grid grid-cols-3 gap-4 text-sm">
+                    <div>
+                      <p className="text-muted-foreground">Quarters</p>
+                      <p className="font-medium">{selectedMockBill.payment_quarters}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Start Quarter</p>
+                      <p className="font-medium">{selectedMockBill.payment_start_quarter}</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Per Quarter</p>
+                      <p className="font-medium">₦{(selectedMockBill.amount / selectedMockBill.payment_quarters).toLocaleString()}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowDetailsModal(false)}>
+                Close
+              </Button>
+              <Button onClick={handleAmendTerms}>
+                <Edit className="w-4 h-4 mr-2" />
+                Amend Terms
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Amend Terms Modal */}
+        <Dialog open={showAmendModal} onOpenChange={setShowAmendModal}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>Amend Terms</DialogTitle>
+              <DialogDescription>
+                Modify the payment terms for {selectedMockBill?.invoice_number}. All parties will be notified.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Payment Quarters</Label>
+                  <Select value={amendData.payment_quarters} onValueChange={(v) => setAmendData(prev => ({ ...prev, payment_quarters: v }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2">2 Quarters</SelectItem>
+                      <SelectItem value="4">4 Quarters</SelectItem>
+                      <SelectItem value="6">6 Quarters</SelectItem>
+                      <SelectItem value="8">8 Quarters</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Start Quarter</Label>
+                  <Select value={amendData.payment_start_quarter} onValueChange={(v) => setAmendData(prev => ({ ...prev, payment_start_quarter: v }))}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Q1 2025">Q1 2025</SelectItem>
+                      <SelectItem value="Q2 2025">Q2 2025</SelectItem>
+                      <SelectItem value="Q3 2025">Q3 2025</SelectItem>
+                      <SelectItem value="Q4 2025">Q4 2025</SelectItem>
+                      <SelectItem value="Q1 2026">Q1 2026</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Discount Rate (%)</Label>
+                <Input
+                  type="number"
+                  value={amendData.discount_rate}
+                  onChange={(e) => setAmendData(prev => ({ ...prev, discount_rate: e.target.value }))}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Amendment Notes</Label>
+                <Textarea
+                  value={amendData.notes}
+                  onChange={(e) => setAmendData(prev => ({ ...prev, notes: e.target.value }))}
+                  placeholder="Reason for amendment..."
+                  rows={3}
+                />
+              </div>
+
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-700">
+                <p className="font-medium">This will notify:</p>
+                <ul className="list-disc list-inside mt-1 text-xs">
+                  <li>The SPV who made the offer</li>
+                  <li>The MDA who approved the bill</li>
+                  <li>The Supplier who submitted the invoice</li>
+                </ul>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setShowAmendModal(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleConfirmAmendment} disabled={submitting}>
+                {submitting ? 'Saving...' : 'Confirm Amendment'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
 
         {/* Certify Modal */}
         <Dialog open={showCertifyModal} onOpenChange={setShowCertifyModal}>
