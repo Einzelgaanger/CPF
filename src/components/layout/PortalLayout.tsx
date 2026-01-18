@@ -46,21 +46,22 @@ const getNavItems = (role: AppRole): NavItem[] => {
     case 'supplier':
       return [
         { path: '/supplier', icon: LayoutDashboard, label: 'Dashboard' },
-        { path: '/supplier/submit-bill', icon: Upload, label: 'Submit Bill' },
-        { path: '/supplier/my-bills', icon: FileText, label: 'My Bills' },
+        { path: '/supplier/submit-bill', icon: Upload, label: 'Submit Payable' },
+        { path: '/supplier/my-bills', icon: FileText, label: 'Receivables' },
       ];
     case 'spv':
       return [
         { path: '/spv', icon: LayoutDashboard, label: 'Dashboard' },
-        { path: '/spv/bills', icon: FileText, label: 'Browse Bills' },
+        { path: '/spv/bills', icon: FileText, label: 'Browse Payables' },
         { path: '/spv/offers', icon: Wallet, label: 'My Offers' },
         { path: '/spv/blockchain', icon: Workflow, label: 'Blockchain Deeds' },
       ];
     case 'mda':
       return [
         { path: '/mda', icon: LayoutDashboard, label: 'Dashboard' },
-        { path: '/mda/bills', icon: FileText, label: 'Pending Bills' },
-        { path: '/mda/approved', icon: FileCheck, label: 'Approved Bills' },
+        { path: '/mda/bills', icon: FileText, label: 'Financial Offers' },
+        { path: '/mda/payables', icon: Coins, label: 'Payables Registry' },
+        { path: '/mda/approved', icon: FileCheck, label: 'Approved' },
       ];
     case 'treasury':
       return [
@@ -170,7 +171,7 @@ const PortalLayout: React.FC<PortalLayoutProps> = ({ children }) => {
                 <Landmark className="w-5 h-5 text-black" />
               </div>
               <div className="flex flex-col">
-                <span className="text-sm font-bold bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent">CPF Settlement</span>
+                <span className="text-sm font-bold bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 bg-clip-text text-transparent">RSO Platform</span>
                 <span className="text-[10px] text-neutral-500">{roleConfig.label}</span>
               </div>
             </div>

@@ -5,11 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { FileText, Search, Filter, ExternalLink, CheckCircle, XCircle, Clock, Eye } from 'lucide-react';
+import { FileText, Search, Filter, ExternalLink, CheckCircle, XCircle, Clock, Eye, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Bill {
@@ -28,6 +30,7 @@ interface Bill {
   certificate_number: string | null;
   created_at: string;
   mda_id: string;
+  spv_id: string | null;
 }
 
 interface MDA {
@@ -45,6 +48,18 @@ const MyBillsPage = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  const fetchBills = async () => {
+    const { data: billsData } = await supabase
+      .from('bills')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (billsData) setBills(billsData as Bill[]);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -58,13 +73,7 @@ const MyBillsPage = () => {
         setMdas(mdaMap);
       }
 
-      // Fetch bills
-      const { data: billsData } = await supabase
-        .from('bills')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (billsData) setBills(billsData as Bill[]);
+      await fetchBills();
       setLoading(false);
     };
 
@@ -74,6 +83,7 @@ const MyBillsPage = () => {
   const handleAcceptOffer = async () => {
     if (!selectedBill || !user) return;
 
+    setSubmitting(true);
     try {
       // Update status to offer_accepted (MDA will see it)
       const { error } = await supabase
@@ -94,33 +104,43 @@ const MyBillsPage = () => {
         .single();
 
       // Find MDA users assigned to this MDA
-      const { data: mdaUsers } = await supabase
+      // Prefer matching by `mda_code` (we store the MDA id there), and fallback to legacy `mda_name`.
+      let mdaUsers: Array<{ user_id: string }> = [];
+
+      const { data: mdaUsersByCode } = await supabase
         .from('profiles')
         .select('user_id')
-        .eq('mda_name', mdaData?.name);
+        .eq('mda_code', selectedBill.mda_id);
+
+      if (mdaUsersByCode && mdaUsersByCode.length > 0) {
+        mdaUsers = mdaUsersByCode as Array<{ user_id: string }>;
+      } else if (mdaData?.name) {
+        const { data: mdaUsersByName } = await supabase
+          .from('profiles')
+          .select('user_id')
+          .eq('mda_name', mdaData.name);
+
+        if (mdaUsersByName && mdaUsersByName.length > 0) {
+          mdaUsers = mdaUsersByName as Array<{ user_id: string }>;
+        }
+      }
 
       // Notify MDA users
-      if (mdaUsers && mdaUsers.length > 0) {
-        const mdaNotifications = mdaUsers.map(mdaUser => ({
+      if (mdaUsers.length > 0) {
+        const mdaNotifications = mdaUsers.map((mdaUser) => ({
           user_id: mdaUser.user_id,
           title: 'Bill Pending Your Approval',
-          message: `Invoice ${selectedBill.invoice_number} worth ₦${Number(selectedBill.amount).toLocaleString()} has been accepted by supplier and requires MDA approval.`,
+          message: `Invoice ${selectedBill.invoice_number} worth KES ${Number(selectedBill.amount).toLocaleString()} has been accepted by supplier and requires MDA approval.`,
           type: 'info',
           bill_id: selectedBill.id,
         }));
         await supabase.from('notifications').insert(mdaNotifications);
       }
 
-      // Also notify SPV that their offer was accepted
-      const { data: billWithSpv } = await supabase
-        .from('bills')
-        .select('spv_id')
-        .eq('id', selectedBill.id)
-        .single();
-
-      if (billWithSpv?.spv_id) {
+      // Notify SPV that their offer was accepted
+      if (selectedBill.spv_id) {
         await supabase.from('notifications').insert({
-          user_id: billWithSpv.spv_id,
+          user_id: selectedBill.spv_id,
           title: 'Offer Accepted!',
           message: `Your offer on invoice ${selectedBill.invoice_number} has been accepted by the supplier. Awaiting MDA approval.`,
           type: 'success',
@@ -140,13 +160,8 @@ const MyBillsPage = () => {
         }
       });
 
-      // Refetch bills to update UI with database state
-      const { data: updatedBills } = await supabase
-        .from('bills')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (updatedBills) setBills(updatedBills as Bill[]);
+      // Refetch bills to update UI
+      await fetchBills();
 
       toast.success('Offer accepted! The bill has been sent to MDA for approval.');
       setShowOfferModal(false);
@@ -154,13 +169,23 @@ const MyBillsPage = () => {
     } catch (error) {
       console.error('Error accepting offer:', error);
       toast.error('Failed to accept offer');
+    } finally {
+      setSubmitting(false);
     }
   };
 
   const handleRejectOffer = async () => {
-    if (!selectedBill) return;
+    if (!selectedBill || !user || !rejectReason.trim()) {
+      toast.error('Please provide a reason for rejection');
+      return;
+    }
 
+    setSubmitting(true);
     try {
+      const spvId = selectedBill.spv_id;
+
+      // Keep spv_id so the SPV can see it in "My Offers" and resubmit
+      // Clear offer details but store rejection reason
       const { error } = await supabase
         .from('bills')
         .update({
@@ -168,24 +193,51 @@ const MyBillsPage = () => {
           offer_amount: null,
           offer_discount_rate: null,
           offer_date: null,
-          spv_id: null,
+          rejection_reason: rejectReason,
+          last_rejected_by_supplier: true,
+          last_rejection_date: new Date().toISOString(),
+          // Keep spv_id so SPV can see it in their rejected offers
         })
         .eq('id', selectedBill.id);
 
       if (error) throw error;
 
-      setBills(prev => prev.map(b => 
-        b.id === selectedBill.id 
-          ? { ...b, status: 'submitted', offer_amount: null }
-          : b
-      ));
+      // Notify SPV of rejection with reason
+      if (spvId) {
+        await supabase.from('notifications').insert({
+          user_id: spvId,
+          title: 'Offer Rejected - Action Required',
+          message: `Your offer on invoice ${selectedBill.invoice_number} was rejected. Reason: ${rejectReason}. You can revise and resubmit your offer.`,
+          type: 'error',
+          bill_id: selectedBill.id,
+        });
+      }
 
-      toast.success('Offer rejected. Your bill is back in the pool.');
+      // Log activity
+      await supabase.from('activity_logs').insert({
+        action: 'Supplier Rejected Offer',
+        user_id: user.id,
+        bill_id: selectedBill.id,
+        details: { 
+          invoice_number: selectedBill.invoice_number,
+          rejected_offer_amount: selectedBill.offer_amount,
+          rejection_reason: rejectReason
+        }
+      });
+
+      // Refetch bills
+      await fetchBills();
+
+      toast.success('Offer rejected. The SPV has been notified and can revise their offer.');
+      setShowRejectModal(false);
       setShowOfferModal(false);
       setSelectedBill(null);
+      setRejectReason('');
     } catch (error) {
       console.error('Error rejecting offer:', error);
       toast.error('Failed to reject offer');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -230,8 +282,8 @@ const MyBillsPage = () => {
     <PortalLayout>
       <div className="p-6 space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">My Bills</h1>
-          <p className="text-muted-foreground">Track the status of your submitted invoices</p>
+          <h1 className="text-2xl font-bold text-foreground">Receivables</h1>
+          <p className="text-muted-foreground">Track the status of your submitted invoices and offers</p>
         </div>
 
         {/* Filters */}
@@ -311,14 +363,14 @@ const MyBillsPage = () => {
                       </div>
                     </div>
                     <div className="text-right space-y-2">
-                      <p className="text-lg font-bold">₦{Number(bill.amount).toLocaleString()}</p>
+                      <p className="text-lg font-bold">KES {Number(bill.amount).toLocaleString()}</p>
                       <Badge className={getStatusBadge(bill.status)}>
                         {bill.status.replace(/_/g, ' ')}
                       </Badge>
                       {bill.status === 'offer_made' && bill.offer_amount && (
                         <div className="mt-2">
                           <p className="text-sm font-medium text-purple-600">
-                            Offer: ₦{Number(bill.offer_amount).toLocaleString()}
+                            Offer: KES {Number(bill.offer_amount).toLocaleString()}
                           </p>
                           <Button 
                             size="sm" 
@@ -353,12 +405,12 @@ const MyBillsPage = () => {
                 <div className="p-4 bg-secondary rounded-lg space-y-3">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Original Amount</span>
-                    <span className="font-medium">₦{Number(selectedBill.amount).toLocaleString()}</span>
+                    <span className="font-medium">KES {Number(selectedBill.amount).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Offer Amount</span>
                     <span className="font-bold text-accent">
-                      ₦{Number(selectedBill.offer_amount).toLocaleString()}
+                      KES {Number(selectedBill.offer_amount).toLocaleString()}
                     </span>
                   </div>
                   <div className="flex justify-between">
@@ -369,7 +421,7 @@ const MyBillsPage = () => {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground">You Receive Now</span>
                       <span className="font-bold text-lg text-green-600">
-                        ₦{Number(selectedBill.offer_amount).toLocaleString()}
+                        KES {Number(selectedBill.offer_amount).toLocaleString()}
                       </span>
                     </div>
                   </div>
@@ -383,13 +435,65 @@ const MyBillsPage = () => {
             )}
 
             <DialogFooter className="gap-2">
-              <Button variant="outline" onClick={handleRejectOffer}>
+              <Button 
+                variant="outline" 
+                onClick={() => { setShowOfferModal(false); setShowRejectModal(true); }}
+                disabled={submitting}
+              >
                 <XCircle className="w-4 h-4 mr-2" />
                 Reject Offer
               </Button>
-              <Button onClick={handleAcceptOffer}>
+              <Button onClick={handleAcceptOffer} disabled={submitting}>
                 <CheckCircle className="w-4 h-4 mr-2" />
-                Accept Offer
+                {submitting ? 'Processing...' : 'Accept Offer'}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Rejection Modal */}
+        <Dialog open={showRejectModal} onOpenChange={setShowRejectModal}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-destructive" />
+                Reject Offer
+              </DialogTitle>
+              <DialogDescription>
+                Please provide a reason for rejecting this offer. The SPV will be notified and can revise their offer.
+              </DialogDescription>
+            </DialogHeader>
+            
+            <div className="space-y-4 py-4">
+              {selectedBill && (
+                <div className="p-3 bg-secondary rounded-lg text-sm">
+                  <p><span className="text-muted-foreground">Invoice:</span> {selectedBill.invoice_number}</p>
+                  <p><span className="text-muted-foreground">Offer:</span> KES {Number(selectedBill.offer_amount).toLocaleString()}</p>
+                </div>
+              )}
+              
+              <div className="space-y-2">
+                <Label htmlFor="reject-reason">Rejection Reason *</Label>
+                <Textarea
+                  id="reject-reason"
+                  value={rejectReason}
+                  onChange={(e) => setRejectReason(e.target.value)}
+                  placeholder="e.g., Discount rate too high, need at least 95% of face value..."
+                  rows={4}
+                />
+              </div>
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => { setShowRejectModal(false); setRejectReason(''); }}>
+                Cancel
+              </Button>
+              <Button 
+                variant="destructive" 
+                onClick={handleRejectOffer}
+                disabled={submitting || !rejectReason.trim()}
+              >
+                {submitting ? 'Rejecting...' : 'Confirm Rejection'}
               </Button>
             </DialogFooter>
           </DialogContent>
