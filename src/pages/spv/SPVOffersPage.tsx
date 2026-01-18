@@ -61,11 +61,16 @@ const SPVOffersPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [activeTab, setActiveTab] = useState('accepted');
 
-  // Terms form state
+  // Terms form state - now includes years and coupon rate
   const [termsData, setTermsData] = useState({
+    years: '1',
     payment_quarters: '4',
     start_quarter: 'Q1 2025',
+    coupon_rate: '10',
   });
+
+  // Generated term options to submit to MDA
+  const [termOptions, setTermOptions] = useState<{id: string; label: string; years: number; quarters: number; coupon_rate: number; start_quarter: string}[]>([]);
 
   // Quarter breakdown for per-quarter coupon rates
   const [quarterBreakdown, setQuarterBreakdown] = useState<{quarter: string; amount: number; couponRate: number}[]>([]);
@@ -543,21 +548,44 @@ const SPVOffersPage = () => {
               </div>
 
               {/* Terms Configuration */}
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div className="space-y-2">
-                  <Label>Payment Quarters</Label>
+                  <Label>Duration (Years)</Label>
+                  <Select 
+                    value={termsData.years} 
+                    onValueChange={(v) => {
+                      const years = parseFloat(v);
+                      const quarters = Math.round(years * 4).toString();
+                      setTermsData(prev => ({ ...prev, years: v, payment_quarters: quarters }));
+                    }}
+                  >
+                    <SelectTrigger className="bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background border shadow-lg z-50">
+                      <SelectItem value="0.5">6 Months</SelectItem>
+                      <SelectItem value="1">1 Year</SelectItem>
+                      <SelectItem value="1.5">1.5 Years</SelectItem>
+                      <SelectItem value="2">2 Years</SelectItem>
+                      <SelectItem value="3">3 Years</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Quarters</Label>
                   <Select 
                     value={termsData.payment_quarters} 
                     onValueChange={(v) => setTermsData(prev => ({ ...prev, payment_quarters: v }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-background">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background border shadow-lg z-50">
                       <SelectItem value="2">2 Quarters</SelectItem>
                       <SelectItem value="4">4 Quarters</SelectItem>
                       <SelectItem value="6">6 Quarters</SelectItem>
                       <SelectItem value="8">8 Quarters</SelectItem>
+                      <SelectItem value="12">12 Quarters</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -567,10 +595,10 @@ const SPVOffersPage = () => {
                     value={termsData.start_quarter} 
                     onValueChange={(v) => setTermsData(prev => ({ ...prev, start_quarter: v }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-background">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background border shadow-lg z-50">
                       <SelectItem value="Q1 2025">Q1 2025</SelectItem>
                       <SelectItem value="Q2 2025">Q2 2025</SelectItem>
                       <SelectItem value="Q3 2025">Q3 2025</SelectItem>
@@ -578,6 +606,39 @@ const SPVOffersPage = () => {
                       <SelectItem value="Q1 2026">Q1 2026</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Coupon Rate (%)</Label>
+                  <Input
+                    type="number"
+                    step="0.5"
+                    value={termsData.coupon_rate}
+                    onChange={(e) => setTermsData(prev => ({ ...prev, coupon_rate: e.target.value }))}
+                    className="bg-background"
+                  />
+                </div>
+              </div>
+
+              {/* Summary of Terms Being Offered */}
+              <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                <h4 className="font-semibold text-purple-700 mb-2">Terms Summary for MDA</h4>
+                <div className="grid grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Duration</p>
+                    <p className="font-bold text-purple-700">{termsData.years} Year(s)</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Quarters</p>
+                    <p className="font-bold text-purple-700">{termsData.payment_quarters}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Coupon Rate</p>
+                    <p className="font-bold text-purple-700">{termsData.coupon_rate}%</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Start</p>
+                    <p className="font-bold text-purple-700">{termsData.start_quarter}</p>
+                  </div>
                 </div>
               </div>
 

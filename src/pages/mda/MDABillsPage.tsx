@@ -300,26 +300,41 @@ const MDABillsPage = () => {
                           </div>
                         </div>
 
-                        {/* SPV Terms Summary */}
+                        {/* SPV Terms Summary - Show Available Options */}
                         <div className="pl-16 p-3 bg-purple-50 rounded-lg border border-purple-200">
-                          <p className="text-sm font-medium text-purple-700 mb-2">SPV Proposed Terms:</p>
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                            <div>
-                              <p className="text-muted-foreground">Quarters</p>
-                              <p className="font-medium">{bill.payment_quarters}</p>
-                            </div>
-                            <div>
-                              <p className="text-muted-foreground">Start</p>
-                              <p className="font-medium">{bill.payment_start_quarter}</p>
-                            </div>
-                            <div>
-                              <p className="text-muted-foreground">Discount</p>
-                              <p className="font-medium">{bill.offer_discount_rate}%</p>
-                            </div>
-                            <div>
-                              <p className="text-muted-foreground">Interest Rates</p>
-                              <p className="font-medium">{bill.quarter_rates.join('%, ')}%</p>
-                            </div>
+                          <p className="text-sm font-medium text-purple-700 mb-2">SPV Term Options Available:</p>
+                          <div className="space-y-2">
+                            {bill.term_options?.map((option, idx) => (
+                              <div key={option.id} className="flex items-center gap-3 text-sm p-2 bg-white rounded border">
+                                <span className="font-semibold text-purple-600">{option.label}:</span>
+                                <span>{option.years} yr(s)</span>
+                                <span className="text-muted-foreground">•</span>
+                                <span>{option.quarters}Q</span>
+                                <span className="text-muted-foreground">•</span>
+                                <span>{option.coupon_rate}% coupon</span>
+                                <span className="text-muted-foreground">•</span>
+                                <span>from {option.start_quarter}</span>
+                              </div>
+                            )) || (
+                              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                <div>
+                                  <p className="text-muted-foreground">Quarters</p>
+                                  <p className="font-medium">{bill.payment_quarters}</p>
+                                </div>
+                                <div>
+                                  <p className="text-muted-foreground">Start</p>
+                                  <p className="font-medium">{bill.payment_start_quarter}</p>
+                                </div>
+                                <div>
+                                  <p className="text-muted-foreground">Discount</p>
+                                  <p className="font-medium">{bill.offer_discount_rate}%</p>
+                                </div>
+                                <div>
+                                  <p className="text-muted-foreground">Coupon Rates</p>
+                                  <p className="font-medium">{bill.quarter_rates.join('%, ')}%</p>
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
 
@@ -556,61 +571,98 @@ const MDABillsPage = () => {
                   </div>
                 </div>
 
-                {/* SPV Proposed Terms */}
-                <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
-                  <p className="font-medium text-purple-700 mb-2">SPV Proposed Payment Schedule:</p>
-                  <div className="grid grid-cols-2 gap-3 text-sm mb-3">
-                    <div>
-                      <p className="text-muted-foreground">Payment Quarters</p>
-                      <p className="font-medium">{selectedMockBill.payment_quarters} quarters</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Starting From</p>
-                      <p className="font-medium">{selectedMockBill.payment_start_quarter}</p>
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-muted-foreground text-sm">Coupon Rates per Quarter:</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                      {selectedMockBill.quarter_rates.map((rate, idx) => (
-                        <div key={idx} className="p-2 bg-white rounded border text-center">
-                          <p className="text-xs text-muted-foreground">Q{idx + 1}</p>
-                          <p className="font-semibold text-purple-700">{rate}%</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Selection Dropdown */}
-                <div className="space-y-2">
-                  <Label>Select Payment Terms Option</Label>
+                {/* SPV Term Options - Dropdown Selection */}
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold">Select SPV Payment Terms</Label>
+                  <p className="text-sm text-muted-foreground">Choose from the term options submitted by the SPV</p>
+                  
                   <Select value={selectedTermsOption} onValueChange={setSelectedTermsOption}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Choose terms" />
+                    <SelectTrigger className="h-auto py-3 bg-background border-2">
+                      <SelectValue placeholder="Select payment terms..." />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="spv_proposed">
-                        Accept SPV Proposed Terms ({selectedMockBill.payment_quarters}Q from {selectedMockBill.payment_start_quarter})
-                      </SelectItem>
-                      <SelectItem value="accelerated">
-                        Accelerated ({Math.max(2, selectedMockBill.payment_quarters - 2)}Q from {selectedMockBill.payment_start_quarter})
-                      </SelectItem>
-                      <SelectItem value="extended">
-                        Extended ({selectedMockBill.payment_quarters + 2}Q from {selectedMockBill.payment_start_quarter})
-                      </SelectItem>
-                      <SelectItem value="deferred">
-                        Deferred Start ({selectedMockBill.payment_quarters}Q from Q{parseInt(selectedMockBill.payment_start_quarter.replace('Q', '')) % 4 + 1} 2025)
-                      </SelectItem>
+                    <SelectContent className="bg-background border shadow-xl z-50">
+                      {selectedMockBill.term_options?.map((option) => (
+                        <SelectItem key={option.id} value={option.id} className="py-3">
+                          <div className="flex items-center gap-4">
+                            <span className="font-semibold text-purple-700">{option.label}:</span>
+                            <span>{option.years} yr(s)</span>
+                            <span>•</span>
+                            <span>{option.quarters} quarters</span>
+                            <span>•</span>
+                            <span>{option.coupon_rate}% coupon</span>
+                            <span>•</span>
+                            <span>from {option.start_quarter}</span>
+                          </div>
+                        </SelectItem>
+                      )) || (
+                        <>
+                          <SelectItem value="option-1" className="py-3">
+                            <div className="flex items-center gap-4">
+                              <span className="font-semibold text-purple-700">Standard:</span>
+                              <span>1 yr</span>
+                              <span>•</span>
+                              <span>{selectedMockBill.payment_quarters} quarters</span>
+                              <span>•</span>
+                              <span>{selectedMockBill.quarter_rates[0]}% coupon</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="option-2" className="py-3">
+                            <div className="flex items-center gap-4">
+                              <span className="font-semibold text-purple-700">Extended:</span>
+                              <span>2 yrs</span>
+                              <span>•</span>
+                              <span>8 quarters</span>
+                              <span>•</span>
+                              <span>12% coupon</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="option-3" className="py-3">
+                            <div className="flex items-center gap-4">
+                              <span className="font-semibold text-purple-700">Short-term:</span>
+                              <span>6 months</span>
+                              <span>•</span>
+                              <span>2 quarters</span>
+                              <span>•</span>
+                              <span>9% coupon</span>
+                            </div>
+                          </SelectItem>
+                        </>
+                      )}
                     </SelectContent>
                   </Select>
-                  <p className="text-xs text-muted-foreground">
-                    {selectedTermsOption === 'spv_proposed' && 'Use the exact terms proposed by the SPV'}
-                    {selectedTermsOption === 'accelerated' && 'Shorter payment period with higher quarterly payments'}
-                    {selectedTermsOption === 'extended' && 'Longer payment period with lower quarterly payments'}
-                    {selectedTermsOption === 'deferred' && 'Same duration but starting one quarter later'}
-                  </p>
                 </div>
+
+                {/* Selected Option Details */}
+                {selectedTermsOption && selectedMockBill.term_options && (
+                  <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <p className="font-medium text-green-700 mb-2">Selected Terms Details:</p>
+                    {(() => {
+                      const selected = selectedMockBill.term_options.find(o => o.id === selectedTermsOption);
+                      if (!selected) return null;
+                      const quarterlyAmount = selectedMockBill.amount / selected.quarters;
+                      return (
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                          <div>
+                            <p className="text-muted-foreground">Duration</p>
+                            <p className="font-bold text-green-700">{selected.years} Year(s)</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Quarters</p>
+                            <p className="font-bold text-green-700">{selected.quarters}</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Coupon Rate</p>
+                            <p className="font-bold text-green-700">{selected.coupon_rate}%</p>
+                          </div>
+                          <div>
+                            <p className="text-muted-foreground">Per Quarter</p>
+                            <p className="font-bold text-green-700">₦{quarterlyAmount.toLocaleString()}</p>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label>Approval Notes (Optional)</Label>
@@ -622,8 +674,8 @@ const MDABillsPage = () => {
                   />
                 </div>
 
-                <div className="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-700">
-                  By approving, you confirm that the terms are acceptable and the bill will be forwarded to National Treasury for final certification.
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg text-sm text-amber-700">
+                  By approving, you confirm that the selected terms are acceptable and the bill will be forwarded to National Treasury for final certification.
                 </div>
               </div>
             )}
