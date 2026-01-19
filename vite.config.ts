@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => ({
     allowedHosts: [
       "vggcpf.onrender.com",
       ".onrender.com",
+      "cpf.vgg.app",
       "localhost",
       "127.0.0.1",
     ],

@@ -34,9 +34,12 @@ import {
   topSuppliers,
   topMDAs,
   spvPerformance,
-  recentActivity,
+  expandedActivityLog,
   systemAlerts,
   quarterlySummary,
+  systemHealthMetrics,
+  transactionStats,
+  blockchainStats,
   formatKES 
 } from "@/data/adminMockData";
 import { format } from "date-fns";
@@ -208,6 +211,45 @@ const AdminDashboard = () => {
           </div>
         </div>
 
+        {/* System Health & Performance */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="glass-card p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Activity className="w-4 h-4 text-green-500" />
+              <span className="text-xs text-muted-foreground">Uptime</span>
+            </div>
+            <p className="text-2xl font-bold text-green-600">{systemHealthMetrics.uptime}%</p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="w-4 h-4 text-blue-500" />
+              <span className="text-xs text-muted-foreground">Response Time</span>
+            </div>
+            <p className="text-2xl font-bold text-blue-600">{systemHealthMetrics.responseTime}ms</p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Users className="w-4 h-4 text-purple-500" />
+              <span className="text-xs text-muted-foreground">Active Sessions</span>
+            </div>
+            <p className="text-2xl font-bold text-purple-600">{systemHealthMetrics.activeSessions}</p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Link2 className="w-4 h-4 text-amber-500" />
+              <span className="text-xs text-muted-foreground">Blockchain Txs</span>
+            </div>
+            <p className="text-2xl font-bold text-amber-600">{blockchainStats.totalDeeds}</p>
+          </div>
+          <div className="glass-card p-4">
+            <div className="flex items-center gap-2 mb-2">
+              <TrendingUp className="w-4 h-4 text-emerald-500" />
+              <span className="text-xs text-muted-foreground">Total Volume</span>
+            </div>
+            <p className="text-lg font-bold text-emerald-600">{formatKES(transactionStats.totalVolume)}</p>
+          </div>
+        </div>
+
         {/* Three Column Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Top Suppliers */}
@@ -315,7 +357,7 @@ const AdminDashboard = () => {
               </h3>
             </div>
             <div className="divide-y divide-border max-h-[400px] overflow-y-auto">
-              {recentActivity.map((activity) => (
+              {expandedActivityLog.slice(0, 25).map((activity) => (
                 <div key={activity.id} className="p-4 hover:bg-muted/30 transition-colors">
                   <div className="flex items-start gap-3">
                     <div className={cn(

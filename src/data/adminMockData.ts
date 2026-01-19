@@ -108,28 +108,36 @@ const spvNames = ['Alpha Capital SPV', 'Beta Investments', 'Gamma Finance', 'Del
 const statuses = ['submitted', 'under_review', 'offer_made', 'offer_accepted', 'mda_reviewing', 'mda_approved', 'terms_set', 'treasury_reviewing', 'certified'];
 const billTypes = ['Goods', 'Services', 'Works', 'Mixed'];
 
-export const comprehensiveBills = Array.from({ length: 50 }, (_, i) => {
-  const status = statuses[Math.floor(Math.random() * statuses.length)];
+export const comprehensiveBills = Array.from({ length: 250 }, (_, i) => {
+  const statusIdx = Math.floor(Math.random() * statuses.length);
+  const status = statuses[statusIdx];
   const amount = Math.floor(Math.random() * 150_000_000) + 10_000_000;
   const discountRate = (Math.random() * 5 + 5).toFixed(2);
   const offerAmount = Math.floor(amount * (1 - parseFloat(discountRate) / 100));
+  const supplierIdx = i % supplierNames.length;
+  const mdaIdx = i % mdaNames.length;
+  const spvIdx = i % spvNames.length;
 
   return {
     id: `bill-${i + 1}`,
-    invoice_number: `INV-2026-${String(i + 100).padStart(4, '0')}`,
-    supplier: supplierNames[i % supplierNames.length],
-    mda: mdaNames[i % mdaNames.length],
-    spv: status !== 'submitted' && status !== 'under_review' ? spvNames[i % spvNames.length] : null,
+    invoice_number: `INV-2026-${String(i + 1000).padStart(4, '0')}`,
+    supplier: supplierNames[supplierIdx],
+    mda: mdaNames[mdaIdx],
+    spv: status !== 'submitted' && status !== 'under_review' ? spvNames[spvIdx] : null,
     amount,
     offer_amount: status !== 'submitted' && status !== 'under_review' ? offerAmount : null,
     discount_rate: status !== 'submitted' && status !== 'under_review' ? parseFloat(discountRate) : null,
     status,
     bill_type: billTypes[i % billTypes.length],
-    description: `${billTypes[i % billTypes.length]} supply for ${mdaNames[i % mdaNames.length]} project`,
-    created_at: subDays(new Date(), Math.floor(Math.random() * 60)),
+    description: `${billTypes[i % billTypes.length]} supply for ${mdaNames[mdaIdx]} project - Contract ${i + 1000}`,
+    created_at: subDays(new Date(), Math.floor(Math.random() * 180)),
+    updated_at: subDays(new Date(), Math.floor(Math.random() * 60)),
     payment_quarters: status === 'certified' || status === 'mda_approved' ? Math.floor(Math.random() * 8) + 4 : null,
     payment_start_quarter: status === 'certified' || status === 'mda_approved' ? `Q${Math.floor(Math.random() * 4) + 1} 2026` : null,
     certificate_number: status === 'certified' ? `CERT-2026-${String(Math.floor(Math.random() * 99999)).padStart(5, '0')}` : null,
+    processing_days: status !== 'submitted' && status !== 'under_review' ? Math.floor(Math.random() * 30) + 5 : null,
+    priority: ['low', 'medium', 'high'][Math.floor(Math.random() * 3)],
+    category: ['Construction', 'Medical', 'IT Services', 'Agriculture', 'Transport', 'Education', 'Energy'][Math.floor(Math.random() * 7)],
   };
 });
 
@@ -167,6 +175,148 @@ export const quarterlySummary = [
   { quarter: 'Q4 2025', submitted: 85, certified: 61, value: 3_400_000_000, payout: 3_100_000_000 },
   { quarter: 'Q1 2026', submitted: 32, certified: 18, value: 1_250_000_000, payout: 950_000_000 },
 ];
+
+// ============ PAYMENT SCHEDULES ============
+export const paymentSchedules = Array.from({ length: 120 }, (_, i) => {
+  const bill = comprehensiveBills[i % comprehensiveBills.length];
+  const quarters = bill.payment_quarters || 6;
+  const startQ = Math.floor(Math.random() * 4) + 1;
+  const year = 2026;
+  
+  return Array.from({ length: quarters }, (_, qIdx) => {
+    const quarterNum = ((startQ - 1 + qIdx) % 4) + 1;
+    const yearOffset = Math.floor((startQ - 1 + qIdx) / 4);
+    const quarter = `Q${quarterNum} ${year + yearOffset}`;
+    const amount = Math.floor((bill.amount || 0) / quarters);
+    
+    return {
+      id: `schedule-${i}-${qIdx}`,
+      bill_id: bill.id,
+      invoice_number: bill.invoice_number,
+      supplier: bill.supplier,
+      mda: bill.mda,
+      quarter,
+      amount,
+      status: qIdx === 0 ? 'upcoming' : qIdx < quarters / 2 ? 'scheduled' : 'pending',
+      due_date: `2026-${String((quarterNum - 1) * 3 + 1).padStart(2, '0')}-15`,
+      paid_amount: qIdx === 0 && Math.random() > 0.7 ? amount : 0,
+      paid_date: qIdx === 0 && Math.random() > 0.7 ? format(subDays(new Date(), Math.floor(Math.random() * 30))), 'yyyy-MM-dd') : null,
+    };
+  });
+}).flat();
+
+// ============ EXPANDED ACTIVITY LOG ============
+const activityActions = [
+  'Bill Submitted', 'Bill Certified', 'SPV Offer Made', 'MDA Approved', 'Receivable Note Minted',
+  'Offer Accepted', 'New Bill Submitted', 'Tripartite Deed Signed', 'Payment Terms Set', 'Bill Rejected',
+  'User Registered', 'User Verified', 'Profile Updated', 'Document Uploaded', 'Payment Scheduled',
+  'Blockchain Transaction Initiated', 'Deed Executed', 'Payment Received', 'Certificate Generated',
+  'MDA Authorization Completed', 'Treasury Review Started', 'SPV Due Diligence Completed'
+];
+
+export const expandedActivityLog = Array.from({ length: 200 }, (_, i) => {
+  const actionIdx = Math.floor(Math.random() * activityActions.length);
+  const action = activityActions[actionIdx];
+  const bill = comprehensiveBills[i % comprehensiveBills.length];
+  const value = Math.random() > 0.3 ? Math.floor(Math.random() * 150_000_000) + 10_000_000 : 0;
+  
+  const typeMap: Record<string, 'success' | 'info' | 'warning' | 'error'> = {
+    'Bill Certified': 'success',
+    'Receivable Note Minted': 'success',
+    'Tripartite Deed Signed': 'success',
+    'Payment Received': 'success',
+    'Certificate Generated': 'success',
+    'MDA Approved': 'success',
+    'SPV Offer Made': 'info',
+    'Offer Accepted': 'info',
+    'New Bill Submitted': 'info',
+    'User Registered': 'info',
+    'Payment Scheduled': 'info',
+    'Bill Rejected': 'error',
+    'MDA Authorization Completed': 'warning',
+  };
+  
+  return {
+    id: `activity-${i + 1}`,
+    action,
+    actor: i % 5 === 0 ? 'System' : bill.supplier || topMDAs[i % topMDAs.length].name || spvPerformance[i % spvPerformance.length].name,
+    target: bill.invoice_number || `USER-${i + 1000}`,
+    value,
+    type: typeMap[action] || 'info',
+    time: subDays(new Date(), Math.floor(Math.random() * 90)),
+    metadata: {
+      bill_id: bill.id,
+      category: bill.category || 'General',
+      priority: bill.priority || 'medium',
+    }
+  };
+}).sort((a, b) => b.time.getTime() - a.time.getTime());
+
+// ============ SYSTEM HEALTH METRICS ============
+export const systemHealthMetrics = {
+  uptime: 99.98,
+  responseTime: 145,
+  activeSessions: 234,
+  apiRequestsToday: 15420,
+  errorRate: 0.12,
+  databaseSize: 12.5, // GB
+  blockchainTransactions: 4523,
+  pendingTasks: 23,
+  serverLoad: 45.2,
+  storageUsed: 68.5, // %
+};
+
+// ============ TRANSACTION STATISTICS ============
+export const transactionStats = {
+  totalTransactions: 3456,
+  successfulTransactions: 3310,
+  failedTransactions: 146,
+  avgTransactionValue: 28_500_000,
+  totalVolume: 98_460_000_000,
+  peakHour: '14:00-15:00',
+  avgProcessingTime: 12.5, // hours
+  blockchainConfirmations: 3421,
+  pendingConfirmations: 35,
+};
+
+// ============ DETAILED MDA PERFORMANCE ============
+export const detailedMDAPerformance = topMDAs.map(mda => ({
+  ...mda,
+  pendingBills: Math.floor(mda.billsCount * 0.3),
+  approvedBills: Math.floor(mda.billsCount * 0.5),
+  rejectedBills: Math.floor(mda.billsCount * 0.05),
+  avgResponseTime: Math.floor(Math.random() * 5) + 8, // days
+  approvalRate: 85 + Math.floor(Math.random() * 10), // %
+  usersCount: 3 + Math.floor(Math.random() * 5),
+  lastActivity: subDays(new Date(), Math.floor(Math.random() * 7)),
+  totalValueProcessed: mda.totalValue * 1.2,
+}));
+
+// ============ SUPPLIER PERFORMANCE DETAILS ============
+export const supplierPerformanceDetails = topSuppliers.map(supplier => ({
+  ...supplier,
+  pendingBills: Math.floor(supplier.billsCount * 0.4),
+  rejectedBills: Math.floor(supplier.billsCount * 0.1),
+  avgSubmissionTime: 2 + Math.floor(Math.random() * 3), // days
+  profileCompletion: 85 + Math.floor(Math.random() * 15), // %
+  rating: 4 + Math.random(), // 4.0 - 5.0
+  lastSubmission: subDays(new Date(), Math.floor(Math.random() * 14)),
+  avgBillValue: Math.floor(supplier.totalValue / supplier.billsCount),
+}));
+
+// ============ BLOCKCHAIN STATISTICS ============
+export const blockchainStats = {
+  totalDeeds: 89,
+  executedDeeds: 67,
+  pendingDeeds: 22,
+  totalNotesMinted: 45,
+  totalVolumeOnChain: 3_250_000_000,
+  networkFees: 125_000,
+  avgBlockTime: 15.3, // seconds
+  lastSync: subHours(new Date(), 1),
+  nodesOnline: 12,
+  confirmationsAvg: 3.2,
+};
 
 // ============ FORMAT HELPERS ============
 export const formatKES = (amount: number) => {
