@@ -200,7 +200,7 @@ export const paymentSchedules = Array.from({ length: 120 }, (_, i) => {
       status: qIdx === 0 ? 'upcoming' : qIdx < quarters / 2 ? 'scheduled' : 'pending',
       due_date: `2026-${String((quarterNum - 1) * 3 + 1).padStart(2, '0')}-15`,
       paid_amount: qIdx === 0 && Math.random() > 0.7 ? amount : 0,
-      paid_date: qIdx === 0 && Math.random() > 0.7 ? format(subDays(new Date(), Math.floor(Math.random() * 30))), 'yyyy-MM-dd') : null,
+      paid_date: qIdx === 0 && Math.random() > 0.7 ? format(subDays(new Date(), Math.floor(Math.random() * 30)), 'yyyy-MM-dd') : null,
     };
   });
 }).flat();
