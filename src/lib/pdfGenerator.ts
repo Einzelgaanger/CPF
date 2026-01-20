@@ -98,7 +98,7 @@ export const generateConceptNotePDF = () => {
   doc.setTextColor(64, 64, 64);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  const execSummary = 'The Receivables Securitisation Origination (RSO) Platform is a revolutionary Trade Receivables Discounting System inspired by India\'s TReDS framework. It addresses Kenya\'s KES 500 billion+ pending bills crisis by creating a digital marketplace that converts government receivables into tradeable, blockchain-secured instruments. The platform operates under Capital Markets Authority regulations, connecting suppliers seeking immediate liquidity with institutional investors including pension funds with over KES 1.8 trillion in assets under management.';
+  const execSummary = 'The Receivables Securitisation Origination (RSO) Platform is a revolutionary Trade Receivables Discounting System inspired by India\'s TReDS framework and the USA Assignment Act of 1944. While addressing Kenya\'s KES 500 billion+ pending bills crisis, RSO also enables suppliers to assign receivables for current contracts to obtain LPO/LSO financing, creating a digital marketplace that converts government receivables into tradeable, blockchain-secured instruments. The platform operates under Capital Markets Authority regulations, connecting suppliers seeking immediate liquidity with institutional investors including pension funds with over KES 1.8 trillion in assets under management.';
   const splitExec = doc.splitTextToSize(execSummary, contentWidth - 20);
   doc.text(splitExec, margin + 10, y + 24);
 
@@ -149,7 +149,7 @@ export const generateConceptNotePDF = () => {
   doc.setTextColor(64, 64, 64);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  const problemText = 'Kenyan county governments owe over KES 500 billion to contractors, with payment cycles extending 6-18 months. Counties collect less than 40% of their Own Source Revenue potential. The Inter-Governmental Budget and Economic Council reports systemic causes including unrealistic revenue projections, late disbursement of equitable share, and failure to prioritize pending bills in budgets.';
+  const problemText = 'Kenyan county governments owe over KES 500 billion to contractors, with payment cycles extending 6-18 months. Counties collect less than 40% of their Own Source Revenue potential. The Inter-Governmental Budget and Economic Council reports systemic causes including unrealistic revenue projections, late disbursement of equitable share, and failure to prioritize pending bills in budgets. Beyond pending bills, suppliers also need financing for current contracts (LPO/LSO financing) to maintain cash flow and complete ongoing government work, similar to the USA Assignment Act of 1944 framework.';
   const splitProblem = doc.splitTextToSize(problemText, contentWidth);
   doc.text(splitProblem, margin, y);
   y += 25;
@@ -200,13 +200,13 @@ export const generateConceptNotePDF = () => {
   doc.setTextColor(64, 64, 64);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  const solutionText = 'Inspired by India\'s Trade Receivables Discounting System (TReDS), RSO creates a transparent marketplace under Capital Markets Authority regulations, connecting all stakeholders through specialized digital portals:';
+  const solutionText = 'Inspired by India\'s Trade Receivables Discounting System (TReDS) and the USA Assignment Act of 1944, RSO creates a transparent marketplace under Capital Markets Authority regulations, connecting all stakeholders through specialized digital portals. The platform addresses both pending bills and enables suppliers to assign receivables for current contracts to obtain LPO/LSO financing:';
   doc.text(solutionText, margin, y);
   y += 12;
 
   // Stakeholder table
   const stakeholderData = [
-    ['Suppliers (Originators)', 'Submit verified invoices', 'Immediate liquidity (days, not months)'],
+    ['Suppliers (Originators)', 'Submit verified invoices & assign receivables for current/pending contracts', 'Immediate liquidity (days, not months), LPO/LSO financing'],
     ['SPV (Issuer)', 'Due diligence & purchase', 'Sovereign-grade investment returns'],
     ['MDA (Procuring Entity)', 'Verify & authorize claims', 'Improved contractor relationships'],
     ['Treasury (Obligor)', 'Certify & guarantee', 'Reduced fiscal pressure, better credit']
@@ -381,6 +381,8 @@ export const generateConceptNotePDF = () => {
 
   const kenyaPoints = [
     '• County Pending Bills: KES 500+ billion (Auditor General reports)',
+    '• National Government & County Government MDAs: Current and pending receivables',
+    '• Insurance (Medical) Claims: Significant value (IRA Insurance Regulatory Authority reports)',
     '• OSR Potential: KES 260 billion annually (CRA Tax Gap Analysis)',
     '• Pension Fund AUM: KES 1.8+ trillion (seeking quality investments)',
     '• Regulatory Framework: CMA Asset-Backed Securities Regulations 2007'
