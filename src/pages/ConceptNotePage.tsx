@@ -50,51 +50,58 @@ const ConceptNotePage = () => {
       id: 'problem',
       icon: BarChart3,
       title: 'The Problem',
-      subtitle: '$2 Trillion Global Challenge',
-      content: 'Government payment delays of 6-18 months cause supplier bankruptcy, project abandonment, and economic inefficiency. Traditional solutions like bank factoring have high costs (15-30% discount) and limited availability.'
+      subtitle: 'KES 500B+ Pending Bills Crisis',
+      content: 'Kenyan government entities owe over KES 500 billion to contractors, with payment cycles extending 6-18 months. This creates supplier cash flow crisis, economic inefficiency, and reduced service delivery. Counties collect less than 40% of their Own Source Revenue potential while pending bills continue to accumulate.'
     },
     {
       id: 'solution',
       icon: Zap,
-      title: 'The CPF Solution',
-      subtitle: 'Four-Pillar Digital Ecosystem',
-      content: 'A transparent digital marketplace connecting Suppliers, SPVs (pension funds), MDAs, and Treasury. Converts government receivables into tradeable, blockchain-secured instruments.'
+      title: 'The RSO Solution',
+      subtitle: 'Trade Receivables Discounting System',
+      content: 'Inspired by India\'s TReDS framework, RSO creates a transparent digital marketplace connecting Suppliers, SPVs (pension funds/institutional investors), MDAs, and Treasury. Converts government receivables into tradeable, blockchain-secured instruments under Capital Markets Authority regulations.'
     },
     {
       id: 'stakeholders',
       icon: Users,
       title: 'Stakeholders',
-      subtitle: 'Role-Based Access',
-      content: 'Suppliers submit invoices for immediate liquidity. SPVs conduct due diligence and purchase receivables. MDAs verify and authorize claims. Treasury certifies and guarantees payment.'
+      subtitle: 'Role-Based Digital Portals',
+      content: 'Suppliers submit verified invoices (Originators). SPVs conduct due diligence and purchase receivables (Issuers). MDAs verify and authorize claims (Procuring Entities). National Treasury certifies and provides payment assurance (Obligor). All transactions settled via blockchain.'
+    },
+    {
+      id: 'regulatory',
+      icon: Shield,
+      title: 'Regulatory Framework',
+      subtitle: 'CMA Asset-Backed Securities',
+      content: 'Structured under Capital Markets (Asset Backed Securities) Regulations 2007 and CMA Policy Guidance Note 2017. Compliant with Public Finance Management Act Section 144 on government securities issuance. Aligned with CBK financial infrastructure requirements.'
     },
     {
       id: 'blockchain',
       icon: Lock,
       title: 'Blockchain Settlement',
       subtitle: 'Ethereum Smart Contracts',
-      content: 'Tripartite Deed of Assignment with sequential signing. Receivable Notes minted as NFTs for trading. Immutable audit trail ensures transparency and reduces fraud.'
+      content: 'Tripartite Deed of Assignment with sequential signing by Assignor (Supplier), Procuring Entity (MDA), and Servicing Agent (Treasury). Receivable Notes minted as NFTs for trading on secondary markets. Immutable audit trail ensures transparency and reduces fraud.'
     },
     {
       id: 'market',
       icon: Globe,
       title: 'Market Opportunity',
-      subtitle: 'Nigeria & Ghana Focus',
-      content: 'Kenya: KES 500B+ contractor debt, KES 1.8T+ pension AUM. Ghana: GH₢15-20B arrears, GH₢50B+ pension funds. Scalable to all emerging markets with government payment delays.'
+      subtitle: 'Kenya & East Africa Focus',
+      content: 'Kenya: KES 500B+ contractor debt across 47 counties, KES 1.8T+ pension AUM seeking quality investments. County governments can leverage securitization for immediate liquidity. Scalable model for Uganda, Tanzania, and broader East African Community.'
     }
   ];
 
   const stats = [
-    { value: 'KES 500B+', label: 'Kenyan Contractor Debt' },
-    { value: '6-18', label: 'Months Payment Delay' },
+    { value: 'KES 500B+', label: 'County Pending Bills' },
+    { value: '47', label: 'County Governments' },
     { value: 'KES 1.8T+', label: 'Pension Fund AUM' },
-    { value: '92%', label: 'Typical Advance Rate' },
+    { value: 'KES 260B', label: 'Annual OSR Potential' },
   ];
 
   const phases = [
-    { phase: '1', title: 'Proof of Concept', status: 'current', items: ['Platform complete', 'Demo operational', 'Testing underway'] },
-    { phase: '2', title: 'Pilot Program', status: 'upcoming', items: ['2-3 pilot MDAs', '10-20 suppliers', 'KES 1-5B transactions'] },
-    { phase: '3', title: 'National Rollout', status: 'future', items: ['All national MDAs', 'Banking integration', 'Mobile app launch'] },
-    { phase: '4', title: 'Regional Expansion', status: 'future', items: ['Uganda launch', 'East Africa', 'Multi-currency'] },
+    { phase: '1', title: 'Proof of Concept', status: 'current', items: ['Platform complete', 'Demo operational', 'CMA consultation'] },
+    { phase: '2', title: 'Pilot Program', status: 'upcoming', items: ['2-3 pilot counties', '50-100 suppliers', 'KES 1-5B transactions'] },
+    { phase: '3', title: 'National Rollout', status: 'future', items: ['All 47 counties', 'Banking integration', 'CBK settlement'] },
+    { phase: '4', title: 'Regional Expansion', status: 'future', items: ['Uganda launch', 'EAC expansion', 'Multi-currency'] },
   ];
 
   return (
@@ -143,16 +150,16 @@ const ConceptNotePage = () => {
               </div>
               
               <h1 className="text-4xl lg:text-6xl font-display leading-tight text-white">
-                Contractor Payment
+                Receivables Securitisation
                 <span className="block bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 bg-clip-text text-transparent">
-                  Facility (CPF)
+                  Origination Platform
                 </span>
               </h1>
               
               <p className="text-lg lg:text-xl text-neutral-300 max-w-xl leading-relaxed">
-                Transforming government debt into tradeable, blockchain-secured instruments. 
-                Unlocking billions in working capital for suppliers while creating sovereign-grade 
-                investment opportunities.
+                <span className="text-amber-400 font-semibold">Malipo Polepole ya Pending Bills.</span>{' '}
+                A Trade Receivables Discounting System transforming government pending bills into 
+                tradeable, blockchain-secured instruments backed by Capital Markets Authority regulations.
               </p>
 
               <div className="flex flex-wrap gap-4">
@@ -213,10 +220,10 @@ const ConceptNotePage = () => {
       <div className="px-6 lg:px-12 py-16 lg:py-24 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-4">
-            How CPF <span className="text-amber-400">Works</span>
+            How RSO <span className="text-amber-400">Works</span>
           </h2>
           <p className="text-neutral-400 max-w-2xl mx-auto">
-            A comprehensive solution addressing the $2 trillion global challenge of government payment delays
+            A TReDS-inspired framework addressing Kenya's KES 500B+ pending bills crisis through regulated securitization
           </p>
         </div>
 
@@ -305,7 +312,7 @@ const ConceptNotePage = () => {
             Implementation <span className="text-amber-400">Roadmap</span>
           </h2>
           <p className="text-neutral-400 max-w-2xl mx-auto">
-            From proof of concept to regional expansion across West Africa
+            From proof of concept to regional expansion across East Africa and beyond
           </p>
         </div>
 
@@ -354,11 +361,11 @@ const ConceptNotePage = () => {
                 <span className="text-sm text-amber-400 font-medium">Partnership Opportunity</span>
               </div>
               <h2 className="text-3xl lg:text-4xl font-bold text-white">
-                Ready to <span className="text-amber-400">Transform</span> Government Payments?
+                Ready to <span className="text-amber-400">Transform</span> Pending Bills?
               </h2>
               <p className="text-neutral-400 max-w-2xl mx-auto text-lg">
                 Join us in revolutionizing how governments pay their contractors. 
-                Partner with CPF to unlock billions in working capital.
+                Partner with RSO to unlock KES 500B+ in working capital for Kenyan suppliers.
               </p>
               <div className="flex flex-wrap justify-center gap-4 pt-4">
                 <Button 
