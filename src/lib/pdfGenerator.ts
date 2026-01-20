@@ -58,14 +58,14 @@ export const generateConceptNotePDF = () => {
   doc.setTextColor(245, 158, 11);
   doc.setFontSize(36);
   doc.setFont('helvetica', 'bold');
-  doc.text('Contractor Payment', pageWidth / 2, 105, { align: 'center' });
-  doc.text('Facility (CPF)', pageWidth / 2, 120, { align: 'center' });
+  doc.text('Receivables Securitisation', pageWidth / 2, 105, { align: 'center' });
+  doc.text('Origination (RSO)', pageWidth / 2, 120, { align: 'center' });
 
   // Subtitle
   doc.setTextColor(163, 163, 163);
   doc.setFontSize(16);
   doc.setFont('helvetica', 'normal');
-  doc.text('Government Debt Securitization Platform', pageWidth / 2, 140, { align: 'center' });
+  doc.text('Malipo Polepole ya Pending Bills', pageWidth / 2, 140, { align: 'center' });
 
   // Badge
   doc.setFillColor(245, 158, 11, 0.1);
@@ -78,7 +78,7 @@ export const generateConceptNotePDF = () => {
   // Footer on cover
   doc.setTextColor(115, 115, 115);
   doc.setFontSize(10);
-  doc.text('Receivables Securitisation Origination', pageWidth / 2, pageHeight - 40, { align: 'center' });
+  doc.text('Trade Receivables Discounting System for Kenya', pageWidth / 2, pageHeight - 40, { align: 'center' });
   doc.text('Confidential Document • For Authorized Recipients Only', pageWidth / 2, pageHeight - 32, { align: 'center' });
 
   // ============ PAGE 2: EXECUTIVE SUMMARY ============
@@ -98,18 +98,18 @@ export const generateConceptNotePDF = () => {
   doc.setTextColor(64, 64, 64);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  const execSummary = 'The Contractor Payment Facility (CPF) is a revolutionary financial infrastructure designed to solve the persistent challenge of delayed government payments to contractors and suppliers. By creating a digital marketplace that converts government receivables into tradeable, blockchain-secured instruments, CPF unlocks billions in working capital while providing institutional investors with sovereign-grade investment opportunities.';
+  const execSummary = 'The Receivables Securitisation Origination (RSO) Platform is a revolutionary Trade Receivables Discounting System inspired by India\'s TReDS framework. It addresses Kenya\'s KES 500 billion+ pending bills crisis by creating a digital marketplace that converts government receivables into tradeable, blockchain-secured instruments. The platform operates under Capital Markets Authority regulations, connecting suppliers seeking immediate liquidity with institutional investors including pension funds with over KES 1.8 trillion in assets under management.';
   const splitExec = doc.splitTextToSize(execSummary, contentWidth - 20);
   doc.text(splitExec, margin + 10, y + 24);
 
-  y += 60;
+  y += 65;
 
   // Stats Grid
   const stats = [
-    { value: 'KES 500B+', label: 'Kenyan Contractor Debt' },
-    { value: '6-18', label: 'Months Payment Delay' },
+    { value: 'KES 500B+', label: 'County Pending Bills' },
+    { value: '47', label: 'County Governments' },
     { value: 'KES 1.8T+', label: 'Pension Fund AUM' },
-    { value: '92%', label: 'Typical Advance Rate' }
+    { value: 'KES 260B', label: 'Annual OSR Potential' }
   ];
 
   const statWidth = (contentWidth - 15) / 2;
@@ -149,17 +149,17 @@ export const generateConceptNotePDF = () => {
   doc.setTextColor(64, 64, 64);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  const problemText = 'Governments worldwide owe trillions to contractors, with payment cycles often extending 6-18 months. This creates supplier cash flow crisis, economic inefficiency, and fiscal pressure.';
+  const problemText = 'Kenyan county governments owe over KES 500 billion to contractors, with payment cycles extending 6-18 months. Counties collect less than 40% of their Own Source Revenue potential. The Inter-Governmental Budget and Economic Council reports systemic causes including unrealistic revenue projections, late disbursement of equitable share, and failure to prioritize pending bills in budgets.';
   const splitProblem = doc.splitTextToSize(problemText, contentWidth);
   doc.text(splitProblem, margin, y);
-  y += 20;
+  y += 25;
 
   // Problem table
   const problemData = [
-    ['Bank Factoring', 'High discount rates (15-30%), limited availability'],
-    ['Government Bonds', "Doesn't address supplier liquidity"],
-    ['Direct Payment', 'Fiscally impossible in constrained environments'],
-    ['Traditional Securitization', 'Complex, expensive, lacks transparency']
+    ['Bank Factoring', 'High discount rates (15-30%), limited to formal sector'],
+    ['Treasury Bonds', 'Not accessible for pending bill liquidation'],
+    ['Budget Allocation', 'Insufficient fiscal space, competing priorities'],
+    ['Direct Payment', 'Fiscally impossible in constrained environments']
   ];
 
   // Table header
@@ -188,29 +188,28 @@ export const generateConceptNotePDF = () => {
 
   y += 10;
 
-  // ============ PAGE 3: THE SOLUTION ============
   checkPageBreak(100);
 
   doc.setTextColor(26, 26, 26);
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text('The CPF Solution', margin, y);
+  doc.text('The RSO Solution', margin, y);
   drawGoldLine(y + 3);
   y += 15;
 
   doc.setTextColor(64, 64, 64);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  const solutionText = 'CPF creates a transparent, efficient marketplace connecting all stakeholders through specialized digital portals:';
+  const solutionText = 'Inspired by India\'s Trade Receivables Discounting System (TReDS), RSO creates a transparent marketplace under Capital Markets Authority regulations, connecting all stakeholders through specialized digital portals:';
   doc.text(solutionText, margin, y);
   y += 12;
 
   // Stakeholder table
   const stakeholderData = [
-    ['Suppliers', 'Submit verified invoices', 'Immediate liquidity (days, not months)'],
-    ['SPV', 'Due diligence & purchase', 'Sovereign-grade investment returns'],
-    ['MDA', 'Verify & authorize claims', 'Improved contractor relationships'],
-    ['Treasury', 'Certify & guarantee', 'Reduced fiscal pressure']
+    ['Suppliers (Originators)', 'Submit verified invoices', 'Immediate liquidity (days, not months)'],
+    ['SPV (Issuer)', 'Due diligence & purchase', 'Sovereign-grade investment returns'],
+    ['MDA (Procuring Entity)', 'Verify & authorize claims', 'Improved contractor relationships'],
+    ['Treasury (Obligor)', 'Certify & guarantee', 'Reduced fiscal pressure, better credit']
   ];
 
   // Table header
@@ -377,14 +376,14 @@ export const generateConceptNotePDF = () => {
   doc.setTextColor(26, 26, 26);
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
-  doc.text('Kenya Focus', margin, y);
+  doc.text('Kenya Focus (47 County Governments)', margin, y);
   y += 8;
 
   const kenyaPoints = [
-    '• Government Contractor Debt: Estimated KES 500+ billion',
-    '• Annual Government Procurement: KES 800+ billion',
+    '• County Pending Bills: KES 500+ billion (Auditor General reports)',
+    '• OSR Potential: KES 260 billion annually (CRA Tax Gap Analysis)',
     '• Pension Fund AUM: KES 1.8+ trillion (seeking quality investments)',
-    '• SME Supplier Base: 7+ million (majority government contractors)'
+    '• Regulatory Framework: CMA Asset-Backed Securities Regulations 2007'
   ];
 
   doc.setTextColor(64, 64, 64);
@@ -397,23 +396,24 @@ export const generateConceptNotePDF = () => {
 
   y += 8;
 
-  // Uganda
+  // Legal Framework
   doc.setTextColor(26, 26, 26);
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
-  doc.text('Uganda Expansion', margin, y);
+  doc.text('Legal & Regulatory Framework', margin, y);
   y += 8;
 
-  const ugandaPoints = [
-    '• Government Contractor Arrears: UGX 3-5 trillion',
-    '• Growing Pension Industry: UGX 20+ trillion AUM',
-    '• Strong Regulatory Framework: Bank of Uganda oversight'
+  const legalPoints = [
+    '• Capital Markets (Asset Backed Securities) Regulations 2007',
+    '• CMA Policy Guidance Note on ABS 2017',
+    '• Public Finance Management Act (PFMA) Section 144',
+    '• Central Bank of Kenya Settlement Infrastructure'
   ];
 
   doc.setTextColor(64, 64, 64);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  ugandaPoints.forEach(point => {
+  legalPoints.forEach(point => {
     doc.text(point, margin + 5, y);
     y += 6;
   });
@@ -429,10 +429,10 @@ export const generateConceptNotePDF = () => {
   y += 15;
 
   const phases = [
-    { num: '01', title: 'Proof of Concept', status: 'CURRENT', items: ['✓ Platform complete', '✓ Demo operational', '✓ Testing underway'] },
-    { num: '02', title: 'Pilot Program (Q2 2026)', status: '', items: ['Select 2-3 pilot MDAs', 'Onboard 10-20 suppliers', 'Process KES 1-5 billion'] },
-    { num: '03', title: 'National Rollout (Q4 2026)', status: '', items: ['All national MDAs', 'Banking integration', 'Mobile app launch'] },
-    { num: '04', title: 'Regional Expansion (2027)', status: '', items: ['Uganda launch', 'East Africa expansion', 'Multi-currency support'] }
+    { num: '01', title: 'Proof of Concept', status: 'CURRENT', items: ['✓ Platform complete', '✓ Demo operational', '✓ CMA consultation'] },
+    { num: '02', title: 'Pilot Program (Q2 2026)', status: '', items: ['Select 2-3 pilot counties', 'Onboard 50-100 suppliers', 'Process KES 1-5 billion'] },
+    { num: '03', title: 'National Rollout (Q4 2026)', status: '', items: ['All 47 counties', 'CBK settlement', 'Pension fund integration'] },
+    { num: '04', title: 'Regional Expansion (2027)', status: '', items: ['Uganda launch', 'EAC expansion', 'Multi-currency support'] }
   ];
 
   const phaseWidth = (contentWidth - 10) / 2;
@@ -497,10 +497,10 @@ export const generateConceptNotePDF = () => {
   y += 12;
 
   const advantages = [
+    { title: 'TReDS-Inspired Framework', desc: 'Based on India\'s proven Trade Receivables Discounting System' },
     { title: 'Blockchain Transparency', desc: 'Every transaction is immutable and auditable, reducing fraud' },
-    { title: 'Digital-First Approach', desc: 'Paperless processing, real-time updates, mobile-friendly' },
-    { title: 'Regulatory Compliance', desc: 'Built-in KYC/AML, audit-ready documentation' },
-    { title: 'Investor Confidence', desc: 'Sovereign-backed receivables with structured payments' },
+    { title: 'CMA Regulatory Compliance', desc: 'Structured under Asset-Backed Securities Regulations 2007' },
+    { title: 'Institutional Investors', desc: 'Access to KES 1.8T+ pension fund AUM seeking quality assets' },
     { title: 'Supplier Benefits', desc: 'Fast liquidity, transparent pricing, no collateral required' }
   ];
 
@@ -542,5 +542,5 @@ export const generateConceptNotePDF = () => {
   doc.text('This document is confidential and intended for authorized recipients only.', pageWidth / 2, y + 23, { align: 'center' });
 
   // Save the PDF
-  doc.save('CPF_Concept_Note_2026.pdf');
+  doc.save('RSO_Concept_Note_2026.pdf');
 };
