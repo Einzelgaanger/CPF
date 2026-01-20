@@ -15,7 +15,7 @@ export interface StoredDocument {
   preview?: string;
 }
 
-const DOCS_STORAGE_KEY = 'cpf_poc_documents';
+const DOCS_STORAGE_KEY = 'rso_poc_documents';
 
 // Get all documents from storage
 export const getStoredDocuments = (): StoredDocument[] => {

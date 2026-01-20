@@ -1,12 +1,12 @@
 import { Bell, User } from "lucide-react";
-import CPFLogo from "@/components/CPFLogo";
+import RSOLogo from "@/components/RSOLogo";
 
 const Header = () => {
   return (
     <header className="glass-card border-b border-border/50 sticky top-0 z-50">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <CPFLogo size="md" />
+          <RSOLogo size="md" />
 
           <nav className="hidden md:flex items-center gap-6">
             <a href="#overview" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

@@ -1,13 +1,13 @@
 import { cn } from "@/lib/utils";
 
-interface CPFLogoProps {
+interface RSOLogoProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   showText?: boolean;
   collapsed?: boolean;
 }
 
-const CPFLogo = ({ className, size = "md", showText = true, collapsed = false }: CPFLogoProps) => {
+const RSOLogo = ({ className, size = "md", showText = true, collapsed = false }: RSOLogoProps) => {
   const sizeClasses = {
     sm: "w-8 h-8",
     md: "w-10 h-10",
@@ -38,7 +38,7 @@ const CPFLogo = ({ className, size = "md", showText = true, collapsed = false }:
         {/* Logo Image with Smooth Corners */}
         <img
           src="/logo.png"
-          alt="CPF Platform Logo"
+          alt="RSO Platform Logo"
           className={cn(
             "object-contain",
             "rounded-xl",
@@ -66,4 +66,4 @@ const CPFLogo = ({ className, size = "md", showText = true, collapsed = false }:
   );
 };
 
-export default CPFLogo;
+export default RSOLogo;

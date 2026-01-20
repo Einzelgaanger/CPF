@@ -75,9 +75,9 @@ const Index = () => {
                 <Clock className="w-3.5 h-3.5" />
                 Phase 1: Fast-Track Settlement
               </div>
-              <h1 className="text-xl font-semibold text-foreground mb-1">CPF Pending Bills Securitization</h1>
+              <h1 className="text-xl font-semibold text-foreground mb-1">RSO Pending Bills Securitization</h1>
               <p className="text-sm text-muted-foreground max-w-lg">
-                Settlement vehicle for verified government bills up to KES 2M. All actions sync across the platform.
+                Malipo Polepole ya Pending Bills - Trade Receivables Discounting System for verified government bills.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">

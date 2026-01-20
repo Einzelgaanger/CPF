@@ -1,5 +1,5 @@
-# Contractor Payment Facility (CPF)
-## Government Debt Securitization Platform
+# Receivables Securitisation Origination (RSO)
+## Malipo Polepole ya Pending Bills - Trade Receivables Discounting System
 
 ### Concept Note – January 2026
 
@@ -7,20 +7,20 @@
 
 ## Executive Summary
 
-The **Contractor Payment Facility (CPF)** is a revolutionary financial infrastructure designed to solve the persistent challenge of delayed government payments to contractors and suppliers. By creating a digital marketplace that converts government receivables into tradeable, blockchain-secured instruments, CPF unlocks billions in working capital while providing institutional investors with sovereign-grade investment opportunities.
+The **Receivables Securitisation Origination (RSO) Platform** is a revolutionary Trade Receivables Discounting System inspired by India's TReDS framework. It addresses Kenya's KES 500 billion+ pending bills crisis by creating a digital marketplace that converts government receivables into tradeable, blockchain-secured instruments under Capital Markets Authority regulations.
 
 **Core Value Proposition:**
-- **For Suppliers:** Immediate liquidity instead of waiting 6-18 months for government payment
-- **For Governments:** Reduced fiscal pressure and improved contractor relationships
-- **For Investors:** Access to high-quality, government-backed receivables with predictable returns
+- **For Suppliers (Originators):** Immediate liquidity instead of waiting 6-18 months for government payment
+- **For Governments (Obligors):** Reduced fiscal pressure and improved contractor relationships
+- **For Investors (SPVs):** Access to high-quality, government-backed receivables with predictable returns
 
 ---
 
 ## The Problem
 
-### Government Payment Delays: A $2 Trillion Global Challenge
+### Government Payment Delays: A KES 500 Billion Kenyan Crisis
 
-Governments worldwide owe trillions to contractors, with payment cycles often extending 6-18 months. This creates:
+Kenyan county governments owe over KES 500 billion to contractors, with payment cycles extending 6-18 months. According to CRA Tax Gap Analysis, counties collect less than 40% of their Own Source Revenue potential. This creates:
 
 1. **Supplier Cash Flow Crisis**
    - Small and medium enterprises (SMEs) face bankruptcy
@@ -41,25 +41,26 @@ Governments worldwide owe trillions to contractors, with payment cycles often ex
 
 | Approach | Limitation |
 |----------|-----------|
-| Bank Factoring | High discount rates (15-30%), limited availability |
-| Government Bonds | Doesn't address supplier liquidity |
+| Bank Factoring | High discount rates (15-30%), limited to formal sector |
+| Treasury Bonds | Not accessible for pending bill liquidation |
+| Budget Allocation | Insufficient fiscal space, competing priorities |
 | Direct Payment | Fiscally impossible in constrained environments |
-| Traditional Securitization | Complex, expensive, lacks transparency |
 
 ---
 
-## The CPF Solution
+## The RSO Solution
 
-### A Four-Pillar Digital Ecosystem
+### A TReDS-Inspired Digital Ecosystem
 
-CPF creates a transparent, efficient marketplace connecting all stakeholders through specialized digital portals:
+RSO creates a transparent, efficient marketplace under Capital Markets Authority regulations, connecting all stakeholders through specialized digital portals:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                    CPF SETTLEMENT PLATFORM                      │
+│              RSO PLATFORM - TRADE RECEIVABLES SYSTEM            │
 ├─────────────┬─────────────┬─────────────┬─────────────┬────────┤
-│   SUPPLIER  │     SPV     │     MDA     │  TREASURY   │ ADMIN  │
-│   PORTAL    │   PORTAL    │   PORTAL    │   PORTAL    │ PORTAL │
+│  SUPPLIER   │     SPV     │     MDA     │  TREASURY   │ ADMIN  │
+│ (Originator)│  (Issuer)   │ (Procuring  │  (Obligor)  │ PORTAL │
+│   PORTAL    │   PORTAL    │   Entity)   │   PORTAL    │        │
 ├─────────────┴─────────────┴─────────────┴─────────────┴────────┤
 │              BLOCKCHAIN SETTLEMENT LAYER (Ethereum)             │
 ├─────────────────────────────────────────────────────────────────┤
@@ -69,26 +70,54 @@ CPF creates a transparent, efficient marketplace connecting all stakeholders thr
 
 ### Stakeholder Roles
 
-#### 1. Suppliers (Contractors)
+#### 1. Suppliers (Originators)
 - Submit verified invoices for completed government work
 - Receive immediate liquidity at competitive discount rates
 - Track payment status in real-time
 
-#### 2. Special Purpose Vehicle (SPV)
+#### 2. Special Purpose Vehicle (SPV/Issuer)
 - Financial intermediary (e.g., pension fund investment arm)
 - Conducts due diligence on submitted bills
 - Makes purchase offers to suppliers
 - Issues receivable notes to investors
 
-#### 3. Ministries, Departments & Agencies (MDAs)
+#### 3. Ministries, Departments & Agencies (Procuring Entities)
 - Verify and authorize contractor claims
 - Confirm work completion and invoice authenticity
 - Approve debt assignment to SPV
 
-#### 4. National Treasury
+#### 4. National Treasury (Obligor)
 - Final certification of government obligation
 - Sets payment terms and schedules
-- Guarantees payment to SPV on maturity
+- Provides payment assurance to SPV on maturity
+
+---
+
+## Regulatory Framework
+
+### Kenya Capital Markets Compliance
+
+The RSO Platform operates under Kenya's established regulatory framework:
+
+1. **Capital Markets (Asset Backed Securities) Regulations 2007**
+   - Framework for securitization transactions
+   - SPV structuring requirements
+   - Investor protection measures
+
+2. **CMA Policy Guidance Note on ABS 2017**
+   - Asset origination requirements (Paragraph 15.01)
+   - Documentation standards
+   - Sale and assignment procedures
+
+3. **Public Finance Management Act (PFMA)**
+   - Section 144: Government securities issuance
+   - Section 142: Short-term borrowing provisions
+   - Regulation 177(2): Manner of borrowing
+
+4. **Central Bank of Kenya Settlement**
+   - Integration with CBK Internet Banking System
+   - Settlement infrastructure compliance
+   - Clearing and payment mechanisms
 
 ---
 
@@ -116,7 +145,7 @@ Supplier accepts/negotiates
 
 ### Phase 3: MDA Verification
 ```
-MDA receives notification
+MDA (Procuring Entity) receives notification
     ↓
 Verifies work completion
     ↓
@@ -127,7 +156,7 @@ Issues Letter of Authorization
 
 ### Phase 4: Treasury Certification
 ```
-Treasury reviews MDA authorization
+National Treasury reviews MDA authorization
     ↓
 Validates against budget allocation
     ↓
@@ -140,7 +169,7 @@ Issues Certificate of Indebtedness
 ```
 Tripartite Deed of Assignment created
     ↓
-Sequential signing: Supplier → MDA → Treasury
+Sequential signing: Assignor → Procuring Entity → Servicing Agent
     ↓
 Smart contract executed on Ethereum
     ↓
@@ -167,7 +196,7 @@ Receivable Note NFT minted for trading
 - RESTful APIs for external systems
 - Webhook notifications
 - Document verification services
-- Banking system integration
+- CBK Internet Banking integration
 
 ---
 
@@ -192,58 +221,58 @@ Receivable Note NFT minted for trading
 
 | Component | Value |
 |-----------|-------|
-| Invoice Amount | ₦100,000,000 |
+| Invoice Amount | KES 100,000,000 |
 | Discount Rate | 8% |
-| SPV Purchase Price | ₦92,000,000 |
-| Supplier Receives | ₦92,000,000 (immediate) |
-| SPV Receives at Maturity | ₦100,000,000 |
-| SPV Profit | ₦8,000,000 |
-| Government Pays | ₦100,000,000 (over scheduled quarters) |
+| SPV Purchase Price | KES 92,000,000 |
+| Supplier Receives | KES 92,000,000 (immediate) |
+| SPV Receives at Maturity | KES 100,000,000 |
+| SPV Profit | KES 8,000,000 |
+| Government Pays | KES 100,000,000 (over scheduled quarters) |
 
 ---
 
 ## Market Opportunity
 
-### Nigeria Focus
+### Kenya Focus (47 County Governments)
 
-- **Government Contractor Debt:** Estimated ₦5-8 trillion
-- **Annual Government Procurement:** ₦3+ trillion
-- **Pension Fund AUM:** ₦18+ trillion (seeking quality investments)
-- **SME Supplier Base:** 40+ million (majority government contractors)
+- **County Pending Bills:** KES 500+ billion (Auditor General reports)
+- **OSR Potential:** KES 260 billion annually (CRA Tax Gap Analysis 2022)
+- **Pension Fund AUM:** KES 1.8+ trillion (seeking quality investments)
+- **SME Supplier Base:** 7+ million businesses
 
-### Ghana Expansion
+### Key Regulatory Bodies
 
-- **Government Contractor Arrears:** GH₢15-20 billion
-- **Growing Pension Industry:** GH₢50+ billion AUM
-- **Strong Regulatory Framework:** Bank of Ghana oversight
+- Capital Markets Authority (CMA)
+- Central Bank of Kenya (CBK)
+- Retirement Benefits Authority (RBA)
+- Insurance Regulatory Authority (IRA)
+- Public Procurement Regulatory Authority (PPRA)
 
-### Scalability
+### Regional Expansion
 
-The CPF model is replicable across:
+The RSO model is replicable across:
+- East African Community (Uganda, Tanzania, Rwanda)
 - Sub-Saharan Africa (54 countries)
 - Emerging markets globally
-- Any economy with government payment delays
 
 ---
 
 ## Competitive Advantages
 
-1. **Blockchain Transparency**
+1. **TReDS-Inspired Framework**
+   - Based on India's proven Trade Receivables Discounting System
+   - Regulatory precedent for government receivables
+
+2. **Blockchain Transparency**
    - Every transaction is immutable and auditable
    - Reduces fraud and disputes
 
-2. **Digital-First Approach**
-   - Paperless processing
-   - Real-time status updates
-   - Mobile-friendly interfaces
+3. **CMA Regulatory Compliance**
+   - Structured under Asset-Backed Securities Regulations 2007
+   - Investor protection framework
 
-3. **Regulatory Compliance**
-   - Built-in KYC/AML frameworks
-   - Audit-ready documentation
-   - Treasury oversight integration
-
-4. **Investor Confidence**
-   - Sovereign-backed receivables
+4. **Institutional Investors**
+   - Access to KES 1.8T+ pension fund AUM
    - Structured payment schedules
    - Tradeable digital assets
 
@@ -259,24 +288,24 @@ The CPF model is replicable across:
 ### Phase 1: Proof of Concept (Current)
 - ✅ Platform development complete
 - ✅ Demo environment operational
-- ✅ Stakeholder testing underway
-- 🔄 Regulatory engagement initiated
+- ✅ CMA consultation initiated
+- 🔄 Regulatory engagement underway
 
 ### Phase 2: Pilot Program (Q2 2026)
-- Select 2-3 MDAs for pilot
-- Onboard 10-20 verified suppliers
-- Process ₦1-5 billion in transactions
+- Select 2-3 pilot counties
+- Onboard 50-100 verified suppliers
+- Process KES 1-5 billion in transactions
 - Integrate with one SPV partner
 
 ### Phase 3: National Rollout (Q4 2026)
-- All federal MDAs onboarded
+- All 47 county governments onboarded
 - Multiple SPV partnerships
-- Full banking integration
-- Mobile app launch
+- CBK settlement integration
+- Pension fund participation
 
 ### Phase 4: Regional Expansion (2027)
-- Ghana launch
-- Additional West African markets
+- Uganda launch
+- EAC market expansion
 - Cross-border transaction support
 - Multi-currency capability
 
@@ -289,15 +318,15 @@ The CPF model is replicable across:
 | Non-payment by Government | Treasury certification ensures budget allocation |
 | Fraudulent Claims | Multi-party verification, MDA authorization |
 | Technology Failure | Cloud-hosted, redundant infrastructure |
-| Regulatory Changes | Close engagement with regulators |
-| Market Adoption | Phased rollout, incentive programs |
+| Regulatory Changes | Close engagement with CMA, CBK, National Treasury |
+| Market Adoption | Phased rollout, county government partnerships |
 
 ---
 
 ## Governance Structure
 
 ### Advisory Board
-- Government representatives
+- Government representatives (National Treasury, CoG)
 - Financial sector experts
 - Technology advisors
 - Legal/regulatory counsel
@@ -313,12 +342,12 @@ The CPF model is replicable across:
 ## Call to Action
 
 ### For Government Partners
-- Designate pilot MDAs
-- Facilitate treasury integration
+- Designate pilot counties
+- Facilitate National Treasury integration
 - Provide regulatory support
 
 ### For Financial Partners (SPVs)
-- Commit pilot capital (₦5-10 billion)
+- Commit pilot capital (KES 5-10 billion)
 - Assign dedicated team
 - Co-develop risk framework
 
@@ -331,11 +360,11 @@ The CPF model is replicable across:
 
 ## Contact Information
 
-**CPF Settlement Platform**
+**RSO Platform - Receivables Securitisation Origination**
 
 For partnership inquiries and demonstration requests, please contact the project team.
 
 ---
 
-*© 2026 CPF Settlement Platform. All rights reserved.*
+*© 2026 RSO Platform. All rights reserved.*
 *This document is confidential and intended for authorized recipients only.*
