@@ -121,13 +121,13 @@ export const generatePrintableReport = (title: string, content: string): void =>
     </head>
     <body>
       <div class="header">
-        <h1>CPF Pending Bills Securitization</h1>
+        <h1>RSO Pending Bills Securitization</h1>
         <h2>${title}</h2>
         <p>Generated: ${new Date().toLocaleString()}</p>
       </div>
       ${content}
       <div class="footer">
-        <p>CPF Group & Sterling Capital — Transaction Advisors</p>
+        <p>RSO Platform — Receivables Securitisation Origination</p>
         <p>Pending Bills Verification Committee — Confidential Document</p>
       </div>
     </body>

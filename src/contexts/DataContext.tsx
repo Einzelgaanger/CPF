@@ -89,7 +89,7 @@ interface DataContextType extends DataState {
   resetData: () => void;
 }
 
-const STORAGE_KEY = 'cpf_poc_data';
+const STORAGE_KEY = 'rso_poc_data';
 
 const getInitialState = (): DataState => {
   if (typeof window !== 'undefined') {
