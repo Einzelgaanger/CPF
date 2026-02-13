@@ -514,6 +514,212 @@ export type Database = {
           },
         ]
       }
+      reconciliation_records: {
+        Row: {
+          actual_balance: number
+          created_at: string
+          expected_balance: number
+          id: string
+          performed_by: string | null
+          period_end: string
+          period_start: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          trust_account_id: string | null
+          updated_at: string
+          variance: number | null
+          variance_explained: boolean
+          variance_notes: string | null
+          waterfall_id: string | null
+        }
+        Insert: {
+          actual_balance: number
+          created_at?: string
+          expected_balance: number
+          id?: string
+          performed_by?: string | null
+          period_end: string
+          period_start: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          trust_account_id?: string | null
+          updated_at?: string
+          variance?: number | null
+          variance_explained?: boolean
+          variance_notes?: string | null
+          waterfall_id?: string | null
+        }
+        Update: {
+          actual_balance?: number
+          created_at?: string
+          expected_balance?: number
+          id?: string
+          performed_by?: string | null
+          period_end?: string
+          period_start?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          trust_account_id?: string | null
+          updated_at?: string
+          variance?: number | null
+          variance_explained?: boolean
+          variance_notes?: string | null
+          waterfall_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reconciliation_records_trust_account_id_fkey"
+            columns: ["trust_account_id"]
+            isOneToOne: false
+            referencedRelation: "trust_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reconciliation_records_waterfall_id_fkey"
+            columns: ["waterfall_id"]
+            isOneToOne: false
+            referencedRelation: "waterfall_distributions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      settlement_transactions: {
+        Row: {
+          amount: number
+          authorized_at: string | null
+          authorized_by: string | null
+          bill_id: string | null
+          created_at: string
+          currency: string
+          from_account_id: string | null
+          id: string
+          notes: string | null
+          reference_number: string | null
+          second_authorized_at: string | null
+          second_authorized_by: string | null
+          settled_at: string | null
+          status: string
+          to_account_id: string | null
+          transaction_type: string
+          updated_at: string
+          waterfall_id: string | null
+        }
+        Insert: {
+          amount: number
+          authorized_at?: string | null
+          authorized_by?: string | null
+          bill_id?: string | null
+          created_at?: string
+          currency?: string
+          from_account_id?: string | null
+          id?: string
+          notes?: string | null
+          reference_number?: string | null
+          second_authorized_at?: string | null
+          second_authorized_by?: string | null
+          settled_at?: string | null
+          status?: string
+          to_account_id?: string | null
+          transaction_type: string
+          updated_at?: string
+          waterfall_id?: string | null
+        }
+        Update: {
+          amount?: number
+          authorized_at?: string | null
+          authorized_by?: string | null
+          bill_id?: string | null
+          created_at?: string
+          currency?: string
+          from_account_id?: string | null
+          id?: string
+          notes?: string | null
+          reference_number?: string | null
+          second_authorized_at?: string | null
+          second_authorized_by?: string | null
+          settled_at?: string | null
+          status?: string
+          to_account_id?: string | null
+          transaction_type?: string
+          updated_at?: string
+          waterfall_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settlement_transactions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "settlement_transactions_from_account_id_fkey"
+            columns: ["from_account_id"]
+            isOneToOne: false
+            referencedRelation: "trust_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "settlement_transactions_to_account_id_fkey"
+            columns: ["to_account_id"]
+            isOneToOne: false
+            referencedRelation: "trust_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "settlement_transactions_waterfall_id_fkey"
+            columns: ["waterfall_id"]
+            isOneToOne: false
+            referencedRelation: "waterfall_distributions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trust_accounts: {
+        Row: {
+          account_name: string
+          account_number: string | null
+          account_type: string
+          balance: number
+          bank_name: string | null
+          created_at: string
+          currency: string
+          id: string
+          spv_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          account_name: string
+          account_number?: string | null
+          account_type: string
+          balance?: number
+          bank_name?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          spv_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          account_name?: string
+          account_number?: string | null
+          account_type?: string
+          balance?: number
+          bank_name?: string | null
+          created_at?: string
+          currency?: string
+          id?: string
+          spv_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -534,6 +740,106 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      waterfall_distributions: {
+        Row: {
+          admin_fee_rate: number | null
+          admin_fees_amount: number
+          bill_id: string | null
+          created_at: string
+          deed_id: string | null
+          distributed_at: string | null
+          id: string
+          interest_amount: number
+          interest_rate: number | null
+          notes: string | null
+          obligor_payment_amount: number
+          obligor_payment_date: string | null
+          principal_amount: number
+          reconciled_at: string | null
+          reconciled_by: string | null
+          residual_amount: number
+          status: string
+          tax_rate: number | null
+          taxes_amount: number
+          trust_account_id: string | null
+          trustee_fee_rate: number | null
+          trustee_fees_amount: number
+          updated_at: string
+        }
+        Insert: {
+          admin_fee_rate?: number | null
+          admin_fees_amount?: number
+          bill_id?: string | null
+          created_at?: string
+          deed_id?: string | null
+          distributed_at?: string | null
+          id?: string
+          interest_amount?: number
+          interest_rate?: number | null
+          notes?: string | null
+          obligor_payment_amount: number
+          obligor_payment_date?: string | null
+          principal_amount?: number
+          reconciled_at?: string | null
+          reconciled_by?: string | null
+          residual_amount?: number
+          status?: string
+          tax_rate?: number | null
+          taxes_amount?: number
+          trust_account_id?: string | null
+          trustee_fee_rate?: number | null
+          trustee_fees_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          admin_fee_rate?: number | null
+          admin_fees_amount?: number
+          bill_id?: string | null
+          created_at?: string
+          deed_id?: string | null
+          distributed_at?: string | null
+          id?: string
+          interest_amount?: number
+          interest_rate?: number | null
+          notes?: string | null
+          obligor_payment_amount?: number
+          obligor_payment_date?: string | null
+          principal_amount?: number
+          reconciled_at?: string | null
+          reconciled_by?: string | null
+          residual_amount?: number
+          status?: string
+          tax_rate?: number | null
+          taxes_amount?: number
+          trust_account_id?: string | null
+          trustee_fee_rate?: number | null
+          trustee_fees_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waterfall_distributions_bill_id_fkey"
+            columns: ["bill_id"]
+            isOneToOne: false
+            referencedRelation: "bills"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waterfall_distributions_deed_id_fkey"
+            columns: ["deed_id"]
+            isOneToOne: false
+            referencedRelation: "blockchain_deeds"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waterfall_distributions_trust_account_id_fkey"
+            columns: ["trust_account_id"]
+            isOneToOne: false
+            referencedRelation: "trust_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
