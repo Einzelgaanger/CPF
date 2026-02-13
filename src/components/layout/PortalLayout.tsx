@@ -69,6 +69,7 @@ const getNavItems = (role: AppRole): NavItem[] => {
         { path: '/treasury', icon: LayoutDashboard, label: 'Dashboard' },
         { path: '/treasury/pending', icon: FileText, label: 'Pending Certification' },
         { path: '/treasury/certified', icon: ClipboardCheck, label: 'Certified Bills' },
+        { path: '/treasury/backend-engine', icon: Settings, label: 'Backend Engine' },
       ];
     case 'admin':
       return [

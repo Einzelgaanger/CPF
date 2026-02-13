@@ -38,6 +38,7 @@ import TreasuryDashboard from "./pages/treasury/TreasuryDashboard";
 import TreasuryPendingPage from "./pages/treasury/TreasuryPendingPage";
 import TreasuryCertifiedPage from "./pages/treasury/TreasuryCertifiedPage";
 import TreasuryProfilePage from "./pages/treasury/TreasuryProfilePage";
+import TreasuryBackendEnginePage from "./pages/treasury/TreasuryBackendEnginePage";
 
 // Admin Portal
 import AppLayout from "@/components/layout/AppLayout";
@@ -92,6 +93,7 @@ const App = () => (
                 <Route path="/treasury" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryDashboard /></ProtectedRoute>} />
                 <Route path="/treasury/pending" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryPendingPage /></ProtectedRoute>} />
                 <Route path="/treasury/certified" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryCertifiedPage /></ProtectedRoute>} />
+                <Route path="/treasury/backend-engine" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryBackendEnginePage /></ProtectedRoute>} />
                 <Route path="/treasury/profile" element={<ProtectedRoute allowedRoles={['treasury']}><TreasuryProfilePage /></ProtectedRoute>} />
 
                 {/* Admin Portal */}

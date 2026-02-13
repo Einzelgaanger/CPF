@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import TopBar from "@/components/layout/TopBar";
@@ -21,7 +21,8 @@ import {
   Wallet,
   Link2,
   Bell,
-  Activity
+  Activity,
+  Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
@@ -43,10 +44,42 @@ import {
   formatKES 
 } from "@/data/adminMockData";
 import { format } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const { profile } = useAuth();
+
+  // Backend Engine live metrics
+  const [engineMetrics, setEngineMetrics] = useState({
+    trustAccounts: 0, totalBalance: 0,
+    activeDistributions: 0, distributedValue: 0,
+    pendingReconciliations: 0, settledTransactions: 0,
+  });
+
+  useEffect(() => {
+    const fetchEngineMetrics = async () => {
+      const [accRes, distRes, recRes, txRes] = await Promise.all([
+        supabase.from('trust_accounts').select('balance, status'),
+        supabase.from('waterfall_distributions').select('obligor_payment_amount, status'),
+        supabase.from('reconciliation_records').select('status'),
+        supabase.from('settlement_transactions').select('status'),
+      ]);
+      const accounts = accRes.data || [];
+      const dists = distRes.data || [];
+      const recs = recRes.data || [];
+      const txs = txRes.data || [];
+      setEngineMetrics({
+        trustAccounts: accounts.length,
+        totalBalance: accounts.reduce((s, a) => s + Number(a.balance), 0),
+        activeDistributions: dists.filter(d => d.status === 'pending').length,
+        distributedValue: dists.filter(d => d.status === 'distributed').reduce((s, d) => s + Number(d.obligor_payment_amount), 0),
+        pendingReconciliations: recs.filter(r => r.status === 'pending').length,
+        settledTransactions: txs.filter(t => t.status === 'settled').length,
+      });
+    };
+    fetchEngineMetrics();
+  }, []);
 
   const totalUsers = Object.values(usersByRole).reduce((a, b) => a + b, 0);
   const workflowProgress = (systemMetrics.totalCertifiedCount / systemMetrics.totalBillsCount) * 100;
@@ -432,6 +465,45 @@ const AdminDashboard = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Backend Engine Metrics */}
+        <div className="glass-card p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h3 className="font-semibold text-foreground flex items-center gap-2">
+                <Settings className="w-4 h-4 text-amber-500" />
+                Backend Engine
+              </h3>
+              <p className="text-xs text-muted-foreground">Trust, settlement & securitization infrastructure metrics</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4">
+            <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+              <p className="text-2xl font-bold text-blue-600">{engineMetrics.trustAccounts}</p>
+              <p className="text-xs text-muted-foreground">Trust Accounts</p>
+            </div>
+            <div className="p-4 rounded-lg bg-emerald-50 dark:bg-emerald-900/20">
+              <p className="text-xl font-bold text-emerald-600">{formatKES(engineMetrics.totalBalance)}</p>
+              <p className="text-xs text-muted-foreground">Total Balance</p>
+            </div>
+            <div className="p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20">
+              <p className="text-2xl font-bold text-amber-600">{engineMetrics.activeDistributions}</p>
+              <p className="text-xs text-muted-foreground">Pending Distributions</p>
+            </div>
+            <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20">
+              <p className="text-xl font-bold text-green-600">{formatKES(engineMetrics.distributedValue)}</p>
+              <p className="text-xs text-muted-foreground">Distributed Value</p>
+            </div>
+            <div className="p-4 rounded-lg bg-orange-50 dark:bg-orange-900/20">
+              <p className="text-2xl font-bold text-orange-600">{engineMetrics.pendingReconciliations}</p>
+              <p className="text-xs text-muted-foreground">Pending Reconciliations</p>
+            </div>
+            <div className="p-4 rounded-lg bg-purple-50 dark:bg-purple-900/20">
+              <p className="text-2xl font-bold text-purple-600">{engineMetrics.settledTransactions}</p>
+              <p className="text-xs text-muted-foreground">Settled Transactions</p>
             </div>
           </div>
         </div>
