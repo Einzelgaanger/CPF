@@ -249,10 +249,10 @@ export const generateConceptNotePDF = () => {
   drawGoldLine(y + 3);
   y += 15;
 
-  // Workflow steps
-  const steps = ['Supplier', 'SPV', 'MDA', 'Treasury', 'Blockchain'];
-  const stepLabels = ['Bill Submit', 'Due Diligence', 'Verification', 'Certification', 'Settlement'];
-  const stepWidth = contentWidth / 5;
+  // Workflow steps - 6 step payment flow
+  const steps = ['Supplier', 'SPV', 'Investors', 'MDA', 'Treasury', 'Waterfall'];
+  const stepLabels = ['Origination', 'Assignment', 'Issuance', 'Payment', 'Obligor Pay', 'Distribution'];
+  const stepWidth = contentWidth / 6;
 
   steps.forEach((step, index) => {
     const x = margin + (index * stepWidth) + (stepWidth / 2);
@@ -276,7 +276,7 @@ export const generateConceptNotePDF = () => {
     
     // Labels
     doc.setTextColor(26, 26, 26);
-    doc.setFontSize(9);
+    doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
     doc.text(step, x, y + 22, { align: 'center' });
     
@@ -287,6 +287,95 @@ export const generateConceptNotePDF = () => {
   });
 
   y += 40;
+
+  // ============ BACKEND ENGINE ARCHITECTURE ============
+  checkPageBreak(120);
+
+  doc.setTextColor(26, 26, 26);
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Backend Engine Architecture', margin, y);
+  drawGoldLine(y + 3);
+  y += 12;
+
+  doc.setTextColor(64, 64, 64);
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  const engineIntro = 'The RSO backend engine is the institutional structure that enables receivables to be converted into investable instruments with legal validity, cashflow certainty, ring-fenced risk isolation, and transparent settlement controls. The technology layer sits on top of this engine.';
+  const splitEngine = doc.splitTextToSize(engineIntro, contentWidth);
+  doc.text(splitEngine, margin, y);
+  y += 18;
+
+  // Five Institutional Layers
+  doc.setTextColor(26, 26, 26);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Five Institutional Layers', margin, y);
+  y += 8;
+
+  const layers = [
+    ['I. Trust / SPV Layer', 'Bankruptcy-remote SPV holds legal title to assigned receivables and issues receivables-backed instruments'],
+    ['II. Legal Counsel', 'Drafts assignment agreements, structures trust documents, validates enforceability under applicable law'],
+    ['III. Independent Trustee', 'Oversight of SPV, compliance with trust deed and payment waterfall, represents investor interests'],
+    ['IV. Custody & Settlement', 'Segregated trust accounts (custody bank) and clearing/settlement processes (settlement bank)'],
+    ['V. Administration', 'Tracks receivables pool, monitors payment triggers, performs reconciliations and produces reporting']
+  ];
+
+  // Table header
+  doc.setFillColor(26, 26, 26);
+  doc.rect(margin, y, contentWidth, 8, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Layer', margin + 5, y + 5.5);
+  doc.text('Purpose', margin + 50, y + 5.5);
+  y += 8;
+
+  layers.forEach((row, index) => {
+    const rowHeight = 10;
+    checkPageBreak(rowHeight);
+    if (index % 2 === 0) {
+      doc.setFillColor(249, 250, 251);
+      doc.rect(margin, y, contentWidth, rowHeight, 'F');
+    }
+    doc.setTextColor(64, 64, 64);
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'bold');
+    doc.text(row[0], margin + 5, y + 4);
+    doc.setFont('helvetica', 'normal');
+    const splitDesc = doc.splitTextToSize(row[1], contentWidth - 55);
+    doc.text(splitDesc, margin + 50, y + 4);
+    y += rowHeight;
+  });
+
+  y += 10;
+
+  // Control Mechanisms
+  checkPageBreak(50);
+  doc.setTextColor(26, 26, 26);
+  doc.setFontSize(12);
+  doc.setFont('helvetica', 'bold');
+  doc.text('Control Mechanisms & Safeguards', margin, y);
+  y += 8;
+
+  const controls = [
+    '• Segregated trust accounts with ring-fenced cash movement',
+    '• Independent trustee oversight and covenant monitoring',
+    '• Pre-defined contractual payment waterfall (Taxes → Fees → Interest → Principal → Residual)',
+    '• Reconciliation before disbursement with dual authorization',
+    '• Complete audit trail across all transactions'
+  ];
+
+  doc.setTextColor(64, 64, 64);
+  doc.setFontSize(9);
+  doc.setFont('helvetica', 'normal');
+  controls.forEach(point => {
+    checkPageBreak(6);
+    doc.text(point, margin + 5, y);
+    y += 6;
+  });
+
+  y += 15;
 
   // ============ FINANCIAL MODEL ============
   checkPageBreak(80);
@@ -431,9 +520,9 @@ export const generateConceptNotePDF = () => {
   y += 15;
 
   const phases = [
-    { num: '01', title: 'Proof of Concept', status: 'CURRENT', items: ['✓ Platform complete', '✓ Demo operational', '✓ CMA consultation'] },
-    { num: '02', title: 'Pilot Program (Q2 2026)', status: '', items: ['Select 2-3 pilot counties', 'Onboard 50-100 suppliers', 'Process KES 1-5 billion'] },
-    { num: '03', title: 'National Rollout (Q4 2026)', status: '', items: ['All 47 counties', 'CBK settlement', 'Pension fund integration'] },
+    { num: '01', title: 'Manual/Controlled Backend', status: 'CURRENT', items: ['✓ Documented processes', '✓ Trust structure validation', '✓ CMA consultation'] },
+    { num: '02', title: 'Integrated Monitoring (Q2 2026)', status: '', items: ['Automated reconciliation', 'Account monitoring', 'Pilot counties'] },
+    { num: '03', title: 'Full Orchestration (Q4 2026)', status: '', items: ['Real-time waterfall execution', 'All 47 counties', 'CBK settlement'] },
     { num: '04', title: 'Regional Expansion (2027)', status: '', items: ['Uganda launch', 'EAC expansion', 'Multi-currency support'] }
   ];
 

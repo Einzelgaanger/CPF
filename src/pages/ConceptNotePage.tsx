@@ -61,6 +61,13 @@ const ConceptNotePage = () => {
       content: 'Inspired by India\'s TReDS framework, RSO creates a transparent digital marketplace connecting Suppliers, SPVs (pension funds/institutional investors), MDAs, and Treasury. Converts government receivables into tradeable, blockchain-secured instruments under Capital Markets Authority regulations.'
     },
     {
+      id: 'backend-engine',
+      icon: Shield,
+      title: 'Backend Engine',
+      subtitle: 'Trust, Settlement & Securitization Infrastructure',
+      content: 'The RSO backend engine operates across five institutional layers: (I) Trust/SPV Layer — a bankruptcy-remote SPV holding legal title to assigned receivables; (II) Legal Counsel — drafting assignment agreements and ensuring enforceability; (III) Independent Trustee — oversight, covenant monitoring, and investor protection; (IV) Custody & Settlement Banking — segregated trust accounts and clearing; (V) Administration & Reconciliation — receivables tracking, payment triggers, and audit reporting.'
+    },
+    {
       id: 'stakeholders',
       icon: Users,
       title: 'Stakeholders',
@@ -98,9 +105,9 @@ const ConceptNotePage = () => {
   ];
 
   const phases = [
-    { phase: '1', title: 'Proof of Concept', status: 'current', items: ['Platform complete', 'Demo operational', 'CMA consultation'] },
-    { phase: '2', title: 'Pilot Program', status: 'upcoming', items: ['2-3 pilot counties', '50-100 suppliers', 'KES 1-5B transactions'] },
-    { phase: '3', title: 'National Rollout', status: 'future', items: ['All 47 counties', 'Banking integration', 'CBK settlement'] },
+    { phase: '1', title: 'Manual/Controlled Backend', status: 'current', items: ['Documented processes', 'Trust structure validation', 'CMA consultation'] },
+    { phase: '2', title: 'Integrated Monitoring', status: 'upcoming', items: ['Automated reconciliation', 'Account monitoring', 'Pilot counties'] },
+    { phase: '3', title: 'Full Platform Orchestration', status: 'future', items: ['Real-time waterfall execution', 'All 47 counties', 'CBK settlement'] },
     { phase: '4', title: 'Regional Expansion', status: 'future', items: ['Uganda launch', 'EAC expansion', 'Multi-currency'] },
   ];
 
@@ -271,7 +278,7 @@ const ConceptNotePage = () => {
               Transaction <span className="text-amber-400">Lifecycle</span>
             </h2>
             <p className="text-neutral-400 max-w-2xl mx-auto">
-              From bill submission to blockchain settlement in five streamlined phases
+              Six-step end-to-end payment flow with contractual waterfall distribution
             </p>
           </div>
 
@@ -279,13 +286,14 @@ const ConceptNotePage = () => {
             {/* Connection Line */}
             <div className="hidden lg:block absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-amber-500/20 via-amber-500/40 to-amber-500/20 -translate-y-1/2"></div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
               {[
-                { icon: Users, title: 'Supplier', subtitle: 'Bill Submission', step: '01' },
-                { icon: Briefcase, title: 'SPV', subtitle: 'Due Diligence & Offer', step: '02' },
-                { icon: Building2, title: 'MDA', subtitle: 'Verification', step: '03' },
-                { icon: Landmark, title: 'Treasury', subtitle: 'Certification', step: '04' },
-                { icon: Lock, title: 'Blockchain', subtitle: 'Settlement', step: '05' },
+                { icon: Users, title: 'Supplier', subtitle: 'Receivable Origination', step: '01' },
+                { icon: Briefcase, title: 'SPV', subtitle: 'Receivable Assignment', step: '02' },
+                { icon: Coins, title: 'Investors', subtitle: 'Instrument Issuance', step: '03' },
+                { icon: Building2, title: 'MDA', subtitle: 'Supplier Payment', step: '04' },
+                { icon: Landmark, title: 'Treasury', subtitle: 'Obligor Payment', step: '05' },
+                { icon: Lock, title: 'Waterfall', subtitle: 'Distribution', step: '06' },
               ].map((item, index) => (
                 <div key={index} className="relative">
                   <div className="bg-neutral-900 border border-neutral-800 rounded-2xl p-6 text-center hover:border-amber-500/30 transition-all duration-300 group">
